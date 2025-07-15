@@ -1,0 +1,9 @@
+body {
+  font-family: sans-serif;
+  padding: 2rem;
+  background: #f2f2f2;
+}
+input, select {
+  margin: 0.5rem 0;
+  padding: 0.4rem;
+}

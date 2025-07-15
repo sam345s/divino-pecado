@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Divino Pecado</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .counter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .counter button {
+      padding: 0.2rem 0.5rem;
+      background-color: #e2e8f0;
+      border-radius: 0.25rem;
+    }
+    .error-border {
+      border-color: #ef4444 !important;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md space-y-6">
+    <h1 class="text-3xl font-bold text-center">Bienvenido a Divino Pecado!</h1>
+
+    <!-- Información personal -->
+    <label class="block">
+      <span class="text-gray-700">Nombre completo:</span>
+      <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+    </label>
+
+    <label class="block">
+      <span class="text-gray-700">Universidad donde vas a recoger tu pedido:</span>
+      <select class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
+        <option value="">Selecciona tu universidad</option>
+        <option>Javeriana</option>
+        <option>Los Andes</option>
+        <option>Terpel</option>
+        <option>Distrital</option>
+        <option>Jorge Tadeo Lozano</option>
+        <option>Empresarial</option>
+      </select>
+    </label>
+
+    <label class="block">
+      <span class="text-gray-700">¿Qué deseas pedir?</span>
+      <select id="opcion" onchange="mostrarMenu()" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+      <option value="">Selecciona una opción</option>
+      <option value="bowl">Bowl</option>
+      <option value="sandwich">Sandwich</option>
+      <option value="papaslocas">Papas Locas</option>
+      <option value="nachos">Nachos</option>
+      </select>
+    </label>
+
+    <!-- Contenedor dinámico de menú -->
+    <div id="contenedorMenu" class="space-y-4"></div>
+
+    <!-- Adiciones globales -->
+    <div class="space-y-4">
+      <h2 class="text-xl font-bold text-gray-700">Adiciones</h2>
+
+      <label class="block">
+        <span class="text-gray-700">¿Deseas añadir papas artesanales? ($5.000)</span>
+        <select id="adicionPapas" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+          <option value="no">No</option>
+          <option value="si">Sí</option>
+        </select>
+      </label>
+
+      <label class="block">
+        <span class="text-gray-700">¿Deseas ensalada insignia? ($7.000)</span>
+        <select id="adicionEnsalada" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+          <option value="no">No</option>
+          <option value="si">Sí</option>
+        </select>
+      </label>
+
+      <label class="block">
+        <span class="text-gray-700">¿Deseas bebida?</span>
+        <select id="adicionBebida" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+          <option value="">No gracias</option>
+          <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) - $3.500</option>
+          <option value="Agua Cristal con gas (600 ml)">Agua Cristal con gas (600 ml) - $3.500</option>
+          <option value="Gaseosa (600 ml)">Gaseosa (600 ml) - $3.500</option>
+          <option value="Gaseosa (250 ml)">Gaseosa (250 ml) - $3.000</option>
+        </select>
+      </label>
+
+      <label class="block">
+        <span class="text-gray-700">¿Deseas postre? ($7.000)</span>
+        <select id="adicionPostre" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+          <option value="">No gracias</option>
+          <option value="Limón">Limón</option>
+          <option value="Maracuyá">Maracuyá</option>
+          <option value="Frutos rojos">Frutos rojos</option>
+          <option value="Leche de coco">Leche de coco</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Botón para agregar al carrito -->
+    <div class="text-center">
+      <button onclick="agregarAlCarritoDesdeSeleccion()" class="bg-green-600 text-white px-4 py-2 rounded">Añadir al carrito</button>
+    </div>
+  </div>
+
+  <!-- Carrito de pedidos -->
+  <div id="carrito" class="max-w-3xl mx-auto mt-6 p-4 bg-white rounded-xl shadow-md hidden">
+    <h2 class="text-2xl font-bold mb-4 text-center text-green-700">🛒 Carrito</h2>
+    <ul id="listaCarrito" class="space-y-2"></ul>
+    <div class="flex justify-between items-center mt-4">
+      <p class="font-bold text-lg">Total: <span id="totalCarrito">$0</span></p>
+      <button onclick="efectuarPago()" class="bg-green-600 text-white px-4 py-2 rounded">Confirmar pedido</button>
+
+    </div>
+  </div>
+<!-- Sección de pago -->
+<div id="seccionPago" class="max-w-3xl mx-auto mt-4 p-4 bg-white rounded-xl shadow-md hidden text-center">
+  <button onclick="efectuarPago()" class="bg-gray-600 text-white px-4 py-2 rounded">
+    Confirmar Pedido Final
+  </button>
+</div>
+
+<!-- Sección de confirmación -->
+<div id="seccionConfirmacion" class="max-w-3xl mx-auto mt-4 p-4 bg-white rounded-xl shadow-md hidden text-center">
+  <button onclick="confirmarPedidoFinal()" class="bg-green-700 text-white px-4 py-2 rounded">
+    Confirmar pedido final
+  </button>
+</div>
+
+  <script>
+  const contenedorMenu = document.getElementById('contenedorMenu');
+
+  function mostrarMenu() {
+    const opcion = document.getElementById("opcion").value;
+    contenedorMenu.innerHTML = "";
+    if (opcion === "bowl") {
+      contenedorMenu.innerHTML = `
+        <label class="block">
+          <span class="text-gray-700">Selecciona tu tipo de bowl:</span>
+          <select id="tipoBowl" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            <option value="">Selecciona una opción</option>
+            <option value="semana">Bowl de la semana - $18.000</option>
+            <option value="armar">Arma tu bowl - $21.000</option>
+          </select>
+        </label>
+        <div id="bowlOpciones" class="mt-4"></div>
+      `;
+      document.getElementById("tipoBowl").addEventListener("change", mostrarOpcionesBowl);
+      } else if (opcion === "sandwich") {
+    contenedorMenu.innerHTML = `
+      <label class="block">
+        <span class="text-gray-700">Selecciona tu sandwich:</span>
+        <select id="tipoSandwich" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+          <option value="Seneca">Seneca</option>
+          <option value="Anglicano">Anglicano</option>
+          <option value="Paraíso">Paraíso</option>
+          <option value="Mammon">Mammon</option>
+          <option value="Averno">Averno</option>
+        </select>
+      </label>`;
+ } else if (opcion === "nachos") {
+  contenedorMenu.innerHTML = `
+    <label class="block">
+      <span class="text-gray-700">Selecciona tu proteína:</span>
+      <select id="proteinaNachos" class="mt-1 block w-full border rounded p-2">
+        <option value="">Elige una opción</option>
+        <option value="Carne ropa vieja">Carne ropa vieja</option>
+        <option value="Pollo a la plancha">Pollo a la plancha</option>
+        <option value="Pechuga en ají de gallina">Pechuga en ají de gallina</option>
+        <option value="Carne en cubos">Carne en cubos</option>
+        <option value="Albóndigas">Albóndigas</option>
+        <option value="Cerdo BBQ">Cerdo BBQ</option>
+        <option value="Tartar de pollo">Tartar de pollo</option>
+        <option value="Carne vegana">Carne vegana</option>
+        <option value="Pollo vegano">Pollo vegano</option>
+        <option value="Rollitos primavera">Rollitos primavera</option>
+      </select>
+    </label>
+
+    <div>
+      <span class="text-gray-700">Selecciona tus toppings (máx. 4):</span>
+      <div id="contenedorToppingsNachos" class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+        <label class="flex items-center gap-2"><input type="checkbox" value="Pico de gallo"> Pico de gallo</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Maíz tierno"> Maíz tierno</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Guacamole"> Guacamole</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Lechuga en julianas"> Lechuga en julianas</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Sour cream"> Sour cream</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Pimentones"> Pimentones</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Queso doble crema"> Queso doble crema</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Cebolla de la casa"> Cebolla de la casa</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Zanahoria de la casa"> Zanahoria de la casa</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Plátano maduro"> Plátano maduro</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Jalapeños"> Jalapeños</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Frijoles"> Frijoles</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Pepinillos"> Pepinillos</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Hogao"> Hogao</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Brócoli"> Brócoli</label>
+      </div>
+    </div>
+  `;
+
+  limitarSeleccionToppings("contenedorToppingsNachos", 4);
+  } else if (opcion === "papaslocas") {
+  contenedorMenu.innerHTML = `
+    <label class="block">
+      <span class="text-gray-700">Selecciona tu proteína:</span>
+      <select id="proteinaPapas" class="mt-1 block w-full border rounded p-2">
+        <option value="">Elige una opción</option>
+        <option value="Carne ropa vieja">Carne ropa vieja</option>
+        <option value="Pollo a la plancha">Pollo a la plancha</option>
+        <option value="Pechuga en ají de gallina">Pechuga en ají de gallina</option>
+        <option value="Carne en cubos">Carne en cubos</option>
+        <option value="Albóndigas">Albóndigas</option>
+        <option value="Cerdo BBQ">Cerdo BBQ</option>
+        <option value="Tartar de pollo">Tartar de pollo</option>
+        <option value="Carne vegana">Carne vegana</option>
+        <option value="Pollo vegano">Pollo vegano</option>
+        <option value="Rollitos primavera">Rollitos primavera</option>
+      </select>
+    </label>
+
+    <div>
+      <span class="text-gray-700">Selecciona tus toppings (máx. 3):</span>
+      <div id="contenedorToppingsPapas" class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+        <label class="flex items-center gap-2"><input type="checkbox" value="Pico de gallo"> Pico de gallo</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Maíz tierno"> Maíz tierno</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Guacamole"> Guacamole</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Lechuga en julianas"> Lechuga en julianas</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Sour cream"> Sour cream</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Pimentones"> Pimentones</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Queso doble crema"> Queso doble crema</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Cebolla de la casa"> Cebolla de la casa</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Zanahoria de la casa"> Zanahoria de la casa</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Plátano maduro"> Plátano maduro</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Jalapeños"> Jalapeños</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Frijoles"> Frijoles</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Pepinillos"> Pepinillos</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Hogao"> Hogao</label>
+        <label class="flex items-center gap-2"><input type="checkbox" value="Brócoli"> Brócoli</label>
+      </div>
+    </div>
+  `;
+
+  limitarSeleccionToppings("contenedorToppingsPapas", 3);
+}}
+
+
+  function mostrarOpcionesBowl() {
+    const tipo = document.getElementById("tipoBowl").value;
+    const contenedor = document.getElementById("bowlOpciones");
+    contenedor.innerHTML = "";
+
+    if (tipo === "semana") {
+      contenedor.innerHTML = `
+        <label class="block">
+          <span class="text-gray-700">Elige opción de la semana:</span>
+          <select class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            <option>Criollo</option>
+            <option>Italiano</option>
+          </select>
+        </label>`;
+    } else if (tipo === "armar") {
+      contenedor.innerHTML = `
+  <div class="space-y-4">
+    <!-- Base -->
+    <label class="block">
+      <span class="text-gray-700">Base (1 incluida adicional 4500$):</span>
+      <div class="space-y-2">
+        <div class="counter">Arroz <button onclick="cambiar('base1', -1)">-</button><span id="base1">0</span><button onclick="cambiar('base1', 1)">+</button></div>
+        <div class="counter">Arroz integral <button onclick="cambiar('base2', -1)">-</button><span id="base2">0</span><button onclick="cambiar('base2', 1)">+</button></div>
+        <div class="counter">Macarrones <button onclick="cambiar('base3', -1)">-</button><span id="base3">0</span><button onclick="cambiar('base3', 1)">+</button></div>
+        <div class="counter">Lechuga <button onclick="cambiar('base4', -1)">-</button><span id="base4">0</span><button onclick="cambiar('base4', 1)">+</button></div>
+      </div>
+    </label>
+
+    <!-- Proteína -->
+    <label class="block">
+      <span class="text-gray-700">Proteína (1 incluida, adicionales +$6.000):</span>
+      <div class="space-y-2">
+        <div class="counter">Carne ropa vieja <button onclick="cambiar('prot1', -1)">-</button><span id="prot1">0</span><button onclick="cambiar('prot1', 1)">+</button></div>
+        <div class="counter">Pollo a la plancha <button onclick="cambiar('prot2', -1)">-</button><span id="prot2">0</span><button onclick="cambiar('prot2', 1)">+</button></div>
+        <div class="counter">Pechuga en ají de gallina <button onclick="cambiar('prot3', -1)">-</button><span id="prot3">0</span><button onclick="cambiar('prot3', 1)">+</button></div>
+        <div class="counter">Carne en cubos <button onclick="cambiar('prot4', -1)">-</button><span id="prot4">0</span><button onclick="cambiar('prot4', 1)">+</button></div>
+        <div class="counter">Albóndigas <button onclick="cambiar('prot5', -1)">-</button><span id="prot5">0</span><button onclick="cambiar('prot5', 1)">+</button></div>
+        <div class="counter">Cerdo BBQ <button onclick="cambiar('prot6', -1)">-</button><span id="prot6">0</span><button onclick="cambiar('prot6', 1)">+</button></div>
+        <div class="counter">Tartar de pollo <button onclick="cambiar('prot7', -1)">-</button><span id="prot7">0</span><button onclick="cambiar('prot7', 1)">+</button></div>
+        <div class="counter">Carne vegana <button onclick="cambiar('prot8', -1)">-</button><span id="prot8">0</span><button onclick="cambiar('prot8', 1)">+</button></div>
+        <div class="counter">Pollo vegano <button onclick="cambiar('prot9', -1)">-</button><span id="prot9">0</span><button onclick="cambiar('prot9', 1)">+</button></div>
+        <div class="counter">Rollitos primavera <button onclick="cambiar('prot10', -1)">-</button><span id="prot10">0</span><button onclick="cambiar('prot10', 1)">+</button></div>
+      </div>
+    </label>
+
+    <!-- Toppings -->
+    <label class="block">
+      <span class="text-gray-700">Toppings (5 incluidos, adicionales +$2.500):</span>
+      <div class="space-y-2">
+        <div class="counter">Pico de gallo <button onclick="cambiar('top1', -1)">-</button><span id="top1">0</span><button onclick="cambiar('top1', 1)">+</button></div>
+        <div class="counter">Maíz tierno <button onclick="cambiar('top2', -1)">-</button><span id="top2">0</span><button onclick="cambiar('top2', 1)">+</button></div>
+        <div class="counter">Guacamole <button onclick="cambiar('top3', -1)">-</button><span id="top3">0</span><button onclick="cambiar('top3', 1)">+</button></div>
+        <div class="counter">Lechuga en julianas <button onclick="cambiar('top4', -1)">-</button><span id="top4">0</span><button onclick="cambiar('top4', 1)">+</button></div>
+        <div class="counter">Sour cream <button onclick="cambiar('top5', -1)">-</button><span id="top5">0</span><button onclick="cambiar('top5', 1)">+</button></div>
+        <div class="counter">Pimentones <button onclick="cambiar('top6', -1)">-</button><span id="top6">0</span><button onclick="cambiar('top6', 1)">+</button></div>
+        <div class="counter">Queso doble crema <button onclick="cambiar('top7', -1)">-</button><span id="top7">0</span><button onclick="cambiar('top7', 1)">+</button></div>
+        <div class="counter">Cebolla de la casa <button onclick="cambiar('top8', -1)">-</button><span id="top8">0</span><button onclick="cambiar('top8', 1)">+</button></div>
+        <div class="counter">Zanahoria de la casa <button onclick="cambiar('top9', -1)">-</button><span id="top9">0</span><button onclick="cambiar('top9', 1)">+</button></div>
+        <div class="counter">Plátano maduro <button onclick="cambiar('top10', -1)">-</button><span id="top10">0</span><button onclick="cambiar('top10', 1)">+</button></div>
+        <div class="counter">Jalapeños <button onclick="cambiar('top11', -1)">-</button><span id="top11">0</span><button onclick="cambiar('top11', 1)">+</button></div>
+        <div class="counter">Frijoles <button onclick="cambiar('top12', -1)">-</button><span id="top12">0</span><button onclick="cambiar('top12', 1)">+</button></div>
+        <div class="counter">Pepinillos <button onclick="cambiar('top13', -1)">-</button><span id="top13">0</span><button onclick="cambiar('top13', 1)">+</button></div>
+        <div class="counter">Hogao <button onclick="cambiar('top14', -1)">-</button><span id="top14">0</span><button onclick="cambiar('top14', 1)">+</button></div>
+        <div class="counter">Brócoli <button onclick="cambiar('top15', -1)">-</button><span id="top15">0</span><button onclick="cambiar('top15', 1)">+</button></div>
+      </div>
+    </label>
+  </div>`;
+      }
+    }
+
+    function cambiar(id, delta) {
+    const span = document.getElementById(id);
+    let valor = parseInt(span.textContent);
+    valor = Math.max(0, valor + delta);
+    span.textContent = valor;
+
+    if (carrito.length > 0 && document.getElementById("tipoBowl")?.value === "armar") {
+      actualizarAdicionalesEnCarrito();
+    }
+  }
+
+  function validarProteinas() {
+    const proteinas = ['prot1', 'prot2', 'prot3', 'prot4', 'prot5', 'prot6', 'prot7', 'prot8', 'prot9', 'prot10'];
+    const total = proteinas.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
+    return total > 0;
+  }
+
+  function agregarAdicionalesContadores() {
+    const adicionales = [];
+    const bases = ['base1', 'base2', 'base3', 'base4'];
+    let totalBases = bases.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
+    if (totalBases > 1) {
+      adicionales.push({ nombre: `Adicional bases (${totalBases - 1})`, precio: 4500 * (totalBases - 1), cantidad: 1 });
+    }
+
+    const proteinas = ['prot1', 'prot2', 'prot3', 'prot4', 'prot5', 'prot6', 'prot7', 'prot8', 'prot9', 'prot10'];
+    let totalProteinas = proteinas.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
+    if (totalProteinas > 1) {
+      adicionales.push({ nombre: `Adicional proteínas (${totalProteinas - 1})`, precio: 6000 * (totalProteinas - 1), cantidad: 1 });
+    }
+
+    const toppings = ['top1','top2','top3','top4','top5','top6','top7','top8','top9','top10','top11','top12','top13','top14','top15'];
+    let totalToppings = toppings.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
+    if (totalToppings > 5) {
+      adicionales.push({ nombre: `Adicional toppings (${totalToppings - 5})`, precio: 2500 * (totalToppings - 5), cantidad: 1 });
+    }
+
+    return adicionales;
+  }
+
+  function actualizarAdicionalesEnCarrito() {
+    carrito = carrito.filter(item => !item.nombre.startsWith("Adicional "));
+    const adicionales = agregarAdicionalesContadores();
+    adicionales.forEach(item => carrito.push(item));
+    actualizarCarrito();
+  }
+ function efectuarPago() {
+  alert("✅ Simulación de pago completado con éxito.");
+  document.getElementById("seccionPago").classList.add("hidden");
+  document.getElementById("seccionConfirmacion").classList.remove("hidden");
+}
+
+  let carrito = [];
+
+function agregarAlCarritoDesdeSeleccion() {
+  const opcion = document.getElementById("opcion").value;
+  if (!opcion) {
+    alert("❌ Selecciona si quieres Bowl, Sandwich, Nachos o Papas Locas");
+    return;
+  }
+
+  carrito = [];
+
+  if (opcion === "bowl") {
+    const tipoBowl = document.getElementById("tipoBowl").value;
+    if (!tipoBowl) {
+      alert("❌ Selecciona el tipo de bowl");
+      return;
+    }
+    if (tipoBowl === "armar" && !validarProteinas()) {
+      alert("⚠️ Debes seleccionar al menos 1 proteína");
+      return;
+    }
+
+    if (tipoBowl === "semana") {
+      carrito.push({ nombre: "Bowl de la semana", precio: 18000, cantidad: 1 });
+    } else {
+      carrito.push({ nombre: "Bowl personalizado", precio: 21000, cantidad: 1 });
+      const adicionales = agregarAdicionalesContadores();
+      adicionales.forEach(item => carrito.push(item));
+    }
+
+  } else if (opcion === "sandwich") {
+    const tipoSandwich = document.getElementById("tipoSandwich").value;
+    carrito.push({ nombre: `Sandwich: ${tipoSandwich}`, precio: 19000, cantidad: 1 });
+
+  } else if (opcion === "nachos") {
+  const prot = document.getElementById("proteinaNachos")?.value;
+  const checks = document.querySelectorAll("#contenedorToppingsNachos input[type='checkbox']:checked");
+  const tops = Array.from(checks).map(o => o.value);
+
+  if (!prot || tops.length === 0) {
+    alert("❌ Selecciona al menos una proteína y toppings para los Nachos");
+    return;
+  }
+
+  carrito.push({ nombre: `Nachos (Prot: ${prot}, Toppings: ${tops.join(", ")})`, precio: 17000, cantidad: 1 });
+} else if (opcion === "papaslocas") {
+  const prot = document.getElementById("proteinaPapas")?.value;
+  const checks = document.querySelectorAll("#contenedorToppingsPapas input[type='checkbox']:checked");
+  const tops = Array.from(checks).map(o => o.value);
+
+  if (!prot || tops.length === 0) {
+    alert("❌ Selecciona al menos una proteína y toppings para las Papas Locas");
+    return;
+  }
+
+  carrito.push({ nombre: `Papas Locas (Prot: ${prot}, Toppings: ${tops.join(", ")})`, precio: 17000, cantidad: 1 });
+}
+
+
+  if (document.getElementById("adicionPapas").value === "si") {
+    carrito.push({ nombre: "Papas artesanales", precio: 5000, cantidad: 1 });
+  }
+  if (document.getElementById("adicionEnsalada").value === "si") {
+    carrito.push({ nombre: "Ensalada insignia", precio: 7000, cantidad: 1 });
+  }
+  const postre = document.getElementById("adicionPostre").value;
+  if (postre) {
+    carrito.push({ nombre: `Postre: ${postre}`, precio: 7000, cantidad: 1 });
+  }
+  const bebida = document.getElementById("adicionBebida").value;
+  if (bebida) {
+    let precio = bebida.includes("250") ? 3000 : 3500;
+    carrito.push({ nombre: `Bebida: ${bebida}`, precio, cantidad: 1 });
+  }
+
+  actualizarCarrito();
+  document.getElementById("seccionPago").classList.remove("hidden");
+}
+
+
+  function actualizarCarrito() {
+    const contenedor = document.getElementById("carrito");
+    const lista = document.getElementById("listaCarrito");
+    const total = document.getElementById("totalCarrito");
+
+    if (carrito.length === 0) {
+      contenedor.classList.add("hidden");
+      return;
+    }
+
+    contenedor.classList.remove("hidden");
+    lista.innerHTML = "";
+    let suma = 0;
+
+    carrito.forEach((item, index) => {
+      suma += item.precio * item.cantidad;
+      const li = document.createElement("li");
+      li.classList.add("flex", "justify-between", "items-center");
+      li.innerHTML = `
+        <span>${item.nombre} x${item.cantidad} - $${item.precio * item.cantidad}</span>
+        <div>
+          <button onclick="cambiarCantidad(${index}, -1)" class="px-2 bg-gray-200 rounded">-</button>
+          <button onclick="cambiarCantidad(${index}, 1)" class="px-2 bg-gray-200 rounded ml-1">+</button>
+        </div>`;
+      lista.appendChild(li);
+    });
+
+    total.textContent = `$${suma}`;
+  }
+
+  function cambiarCantidad(index, delta) {
+    carrito[index].cantidad += delta;
+    if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
+    actualizarCarrito();
+  }
+function limitarSeleccionToppings(idContenedor, limite) {
+  const checkboxes = document.querySelectorAll(`#${idContenedor} input[type="checkbox"]`);
+  checkboxes.forEach(cb => {
+    cb.addEventListener("change", () => {
+      const seleccionados = Array.from(checkboxes).filter(c => c.checked);
+      if (seleccionados.length >= limite) {
+        checkboxes.forEach(c => {
+          if (!c.checked) c.disabled = true;
+        });
+      } else {
+        checkboxes.forEach(c => c.disabled = false);
+      }
+    });
+  });
+}
+limitarSeleccionToppings("contenedorToppingsNachos", 4);
+limitarSeleccionToppings("contenedorToppingsPapas", 3);
+
+  // 🔗 INSERTA AQUÍ TU URL DE LA API DE GOOGLE SHEETS:
+  const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw-r9bFqE4hexMgx17z_DypU2d-syurAq4fVRuTZUTFnbd60XSkjwywuJQ6DU12cljOJQ/exec";
+
+function confirmarPedidoFinal() {
+  const nombreInput = document.querySelector('input[type="text"]');
+  const universidadSelect = document.querySelector('select');
+
+  if (!nombreInput.value.trim() || !universidadSelect.value) {
+    alert("❌ Faltan datos del cliente.");
+    return;
+  }
+
+  if (carrito.length === 0) {
+    alert("❌ El carrito está vacío.");
+    return;
+  }
+
+  const pedido = {
+    nombre: nombreInput.value.trim(),
+    universidad: universidadSelect.value,
+    items: carrito,
+    total: parseInt(document.getElementById("totalCarrito").textContent.replace("$", "").replace(".", "")),
+    fecha: new Date().toISOString()
+  };
+
+  fetch(SHEETS_API_URL, {
+  method: "POST",
+  mode: "no-cors", // ← agrega esto
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(pedido)
+})
+
+  .then(() => {
+    alert("✅ Pedido enviado correctamente.");
+    carrito = [];
+    actualizarCarrito();
+    document.getElementById("seccionConfirmacion").classList.add("hidden");
+  })
+  .catch((error) => {
+    alert("❌ Error al enviar el pedido.");
+    console.error(error);
+  });
+}
+function generarCheckboxToppings(tipo) {
+  const toppings = [
+    "Pico de gallo", "Maíz tierno", "Guacamole", "Lechuga en julianas",
+    "Sour cream", "Pimentones", "Queso doble crema", "Cebolla de la casa",
+    "Zanahoria de la casa", "Plátano maduro", "Jalapeños", "Frijoles",
+    "Pepinillos", "Hogao", "Brócoli"
+  ];
+
+  return toppings.map((top, index) => `
+    <label class="flex items-center">
+      <input type="checkbox" name="topping-${tipo}" value="${top}" class="mr-2" />
+      ${top}
+    </label>`).join("");
+}
+
+</script>
+</body>
+</html>
