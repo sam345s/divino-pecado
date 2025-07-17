@@ -59,6 +59,13 @@
     .error-border {
       border-color: #ef4444 !important;
     }
+    
+  .neon-vinotinto {
+    color: #8b0033; /* Vinotinto oscuro */
+    text-shadow: 0 0 5px #ff4d6d, 0 0 10px #ff4d6d, 0 0 20px #ff4d6d;
+  }
+
+
   </style>
 </head>
 
@@ -83,6 +90,22 @@
       <span class="text-gray-700">Nombre completo:</span>
       <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
     </label>
+<div class="flex justify-center mb-6">
+  <img src="img/Menú.jpg" alt="Menú Divino Pecado" class="w-[85%] max-w-3xl rounded-lg shadow-lg" />
+</div>
+
+<label class="block mt-4">
+  <span class="text-gray-700">De qué universidad eres? O que opción te conviene más!(Para enviar el comprobante)</span>
+  <select id="universidadUsuario" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
+    <option value="">Selecciona tu universidad</option>
+    <option value="javeriana">Javeriana</option>
+    <option value="andes">Los Andes</option>
+    <option value="externado">Externado</option>
+    <option value="distrital">Distrital</option>
+    <option value="terpel">Terpel</option>
+    <option value="empresarial">Empresarial</option>
+  </select>
+</label>
 
     <label class="block">
       <span class="text-gray-700">Universidad donde vas a recoger tu pedido:</span>
@@ -92,7 +115,6 @@
         <option>Los Andes</option>
         <option>Terpel</option>
         <option>Distrital</option>
-        <option>Jorge Tadeo Lozano</option>
         <option>Empresarial</option>
       </select>
     </label>
@@ -140,10 +162,10 @@
         <span class="text-gray-700">¿Deseas bebida?</span>
         <select id="adicionBebida" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
           <option value="">No gracias</option>
-          <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) - $3.500</option>
-          <option value="Agua Cristal con gas (600 ml)">Agua Cristal con gas (600 ml) - $3.500</option>
-          <option value="Gaseosa (600 ml)">Gaseosa (600 ml) - $3.500</option>
-          <option value="Gaseosa (250 ml)">Gaseosa (250 ml) - $3.000</option>
+          <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) </option>
+          <option value="Agua Cristal con gas (600 ml)">Agua Cristal con gas (600 ml) </option>
+          <option value="Gaseosa (600 ml)">Gaseosa (600 ml) </option>
+          <option value="Gaseosa (250 ml)">Gaseosa (250 ml) </option>
         </select>
       </label>
 
@@ -180,15 +202,12 @@
 
     </div>
   </div>
-<!-- Sección de pago -->
-<div id="seccionPago" class="max-w-3xl mx-auto mt-4 p-4 bg-white rounded-xl shadow-md hidden text-center">
-  <button onclick="efectuarPago()" class="bg-gray-600 text-white px-4 py-2 rounded">
-    Confirmar Pedido Final
-  </button>
-</div>
 
 <div id="seccionConfirmacion" class="hidden text-center mt-6 space-y-6 max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg border">
-  <p class="text-green-600 text-xl font-semibold">✅ ¡Tu pedido fue enviado correctamente!</p>
+  <p class="text-green-600 text-xl font-semibold">
+    ✅ ¡Tu pedido fue enviado correctamente!<br>
+    Por favor recuerda después de enviar el comprobante al grupo darle click al botón de confirmar pedido final!!!  
+  </p>
 
   <div>
     <p class="text-gray-700 text-base mb-2">1️⃣ Escanea este código QR para pagar por Nequi:</p>
@@ -200,6 +219,14 @@
   <a id="btnWhatsapp" href="#" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow transition">
     Ir al grupo de WhatsApp
   </a>
+<!-- Resumen final del pedido (para Google Sheets) -->
+<div id="resumenPedidoFinal" class="p-4 text-white text-sm"></div>
+
+  <!-- ✅ Botón que envía a Google Sheets -->
+<div class="mt-4">
+  <button onclick="confirmarPedidoFinal()" class="bg-green-600 text-white px-4 py-2 rounded">
+    Confirmar Pedido Final
+  </button>
 </div>
 
 
@@ -472,7 +499,7 @@ if (imgBowl) {
   const seccionPago = document.getElementById("seccionPago");
   const btnWhatsapp = document.getElementById("btnWhatsapp");
 
-  // Mostrar sección QR y WhatsApp
+  // Mostrar sección QR y WhatsApp (sin ocultar el carrito ni otras cosas)
   seccionConfirmacion.classList.remove("hidden");
 
   // Asignar enlace al botón de WhatsApp
@@ -517,8 +544,15 @@ function agregarAlCarritoDesdeSeleccion() {
     }
 
     if (tipoBowl === "semana") {
-      carrito.push({ nombre: "Bowl de la semana", precio: 18000, cantidad: 1 });
-    } else {
+  const seleccion = document.querySelector('#bowlOpciones select');
+  const tipoSemana = seleccion ? seleccion.value : "sin tipo";
+const productoSemana = { nombre: `Bowl de la semana - ${tipoSemana}`, precio: 18000, cantidad: 1 };
+if (!carrito.some(item => productosIguales(item, productoSemana))) {
+  carrito.push(productoSemana);
+}
+} else {
+
+
 // ✅ Bowl personalizado
 // Recolectar cantidades
 const basesIds = ['base1', 'base2', 'base3', 'base4'];
@@ -580,16 +614,28 @@ if (bebidaIncluida) {
 }
 
 // Agregar al carrito como un solo ítem
-carrito.push({ nombre: descripcion, precio: 21000, cantidad: 1 });
+const bowl = { nombre: descripcion, precio: 21000, cantidad: 1, tipo: "bowl" };
+const existente = carrito.find(item => productosIguales(item, bowl));
+if (!existente) {
+  carrito.push(bowl);
+}
+
 
 // Luego agregamos los adicionales como ítems separados
 const adicionales = agregarAdicionalesContadores();
-adicionales.forEach(item => carrito.push(item));
+adicionales.forEach(item => {
+  if (!carrito.some(i => productosIguales(i, item))) {
+    carrito.push(item);
+  }
+});
 }
 
   } else if (opcion === "sandwich") {
     const tipoSandwich = document.getElementById("tipoSandwich").value;
-    carrito.push({ nombre: `Sandwich: ${tipoSandwich}`, precio: 19000, cantidad: 1 });
+const sandwich = { nombre: `Sandwich: ${tipoSandwich}`, precio: 19000, cantidad: 1 };
+if (!carrito.some(item => productosIguales(item, sandwich))) {
+  carrito.push(sandwich);
+}
 
   } else if (opcion === "nachos") {
   const protIds = ['nachoprot1','nachoprot2','nachoprot3','nachoprot4','nachoprot5','nachoprot6','nachoprot7','nachoprot8','nachoprot9','nachoprot10'];
@@ -624,14 +670,25 @@ adicionales.forEach(item => carrito.push(item));
   if (protSeleccionadas.length > 0) descripcion += `\nProteínas: ${protSeleccionadas.join(", ")}`;
   if (topSeleccionados.length > 0) descripcion += `\nToppings: ${topSeleccionados.join(", ")}`;
 
-  carrito.push({ nombre: descripcion, precio: 17000, cantidad: 1 });
+const nachos = { nombre: descripcion, precio: 17000, cantidad: 1, tipo: "nachos" };
+const existente = carrito.find(item => productosIguales(item, nachos));
+if (!existente) {
+  carrito.push(nachos);
+}
+
 
   // Adicionales
   const totalProte = protIds.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
-  if (totalProte > 1) carrito.push({ nombre: `Adicional proteínas (${totalProte - 1})`, precio: 6000 * (totalProte - 1), cantidad: 1 });
+if (totalProte > 1) {
+  const extraProt = { nombre: `Adicional proteínas (${totalProte - 1})`, precio: 6000 * (totalProte - 1), cantidad: 1 };
+  if (!carrito.some(item => productosIguales(item, extraProt))) carrito.push(extraProt);
+}
 
   const totalTops = topIds.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
-  if (totalTops > 4) carrito.push({ nombre: `Adicional toppings (${totalTops - 4})`, precio: 2500 * (totalTops - 4), cantidad: 1 });
+if (totalTops > 4) {
+  const extraTops = { nombre: `Adicional toppings (${totalTops - 4})`, precio: 2500 * (totalTops - 4), cantidad: 1 };
+  if (!carrito.some(item => productosIguales(item, extraTops))) carrito.push(extraTops);
+}
 
 
  } else if (opcion === "papaslocas") {
@@ -670,12 +727,108 @@ adicionales.forEach(item => carrito.push(item));
     return;
   }
 
-  carrito.push({ nombre: `Papas Locas`, precio: 17000, cantidad: 1 });
-  carrito.push({ nombre: `Proteínas: ${protSeleccionadas.join(", ")}`, precio: 0, cantidad: 1 });
-  carrito.push({ nombre: `Toppings: ${topSeleccionados.join(", ")}`, precio: 0, cantidad: 1 });
+
+  const proteinaPapas = document.querySelector('input[name="proteina-papas"]:checked');
+  const proteinaSeleccionadaPapas = proteinaPapas ? proteinaPapas.value : "";
+
+  const toppingsSeleccionadosPapas = [];
+  document.querySelectorAll(".topping-papas").forEach(el => {
+    const cantidad = parseInt(el.querySelector("span").textContent);
+    if (cantidad > 0) {
+      toppingsSeleccionadosPapas.push(`${el.dataset.nombre} x${cantidad}`);
+    }
+  });
+
+let descripcion = "Papas Locas";
+if (protSeleccionadas.length > 0) {
+  descripcion += `\nProteínas: ${protSeleccionadas.join(", ")}`;
 }
+if (topSeleccionados.length > 0) {
+  descripcion += `\nToppings: ${topSeleccionados.join(", ")}`;
+}
+
+ const papaslocas = {
+  nombre: descripcion,
+  proteina: proteinaSeleccionadaPapas || "sin proteína",
+  toppings: [...toppingsSeleccionadosPapas],
+  descripcion: descripcion,
+  precio: 17000,
+  cantidad: 1,
+  tipo: "papaslocas"
+};
+
+
+ const existente = carrito.find(item => productosIguales(item, papaslocas));
+if (!existente) {
+  carrito.push(papaslocas);
+
+
+
+
   actualizarCarrito();
-  document.getElementById("seccionPago").classList.remove("hidden");
+}
+
+
+
+}
+const postreSeleccionado = document.getElementById("adicionPostre").value;
+if (postreSeleccionado) {
+  const postreExistente = carrito.find(item =>
+    item.nombre === `Postre: ${postreSeleccionado}`
+  );
+
+  if (!postreExistente) {
+    carrito.push({
+      nombre: `Postre: ${postreSeleccionado}`,
+      precio: 7000,
+      cantidad: 1
+    });
+  }
+}
+// --- Agregar bebida si se seleccionó ---
+const bebida = document.getElementById("adicionBebida").value;
+if (bebida) {
+  let precioBebida = 0;
+
+  if (bebida.includes("600 ml")) precioBebida = 3500;
+  else if (bebida.includes("250 ml")) precioBebida = 3000;
+
+  // Verificar si ya existe una bebida igual en el carrito
+  const bebidaExistente = carrito.find(
+    item => item.nombre === `Bebida: ${bebida}`
+  );
+
+  if (!bebidaExistente) {
+    carrito.push({
+      nombre: `Bebida: ${bebida}`,
+      precio: precioBebida,
+      cantidad: 1
+    });
+  }
+}
+// Papas Artesanales
+const adicionPapas = document.getElementById("adicionPapas").value;
+if (adicionPapas === "si") {
+  carrito.push({
+    nombre: "Papas Artesanales",
+    precio: 5000,
+    cantidad: 1
+  });
+}
+
+// Ensalada Insignia
+const adicionEnsalada = document.getElementById("adicionEnsalada").value;
+if (adicionEnsalada === "si") {
+  carrito.push({
+    nombre: "Ensalada Insignia",
+    precio: 7000,
+    cantidad: 1
+  });
+}
+
+  actualizarCarrito();
+document.getElementById("seccionPago").classList.remove("hidden");
+
 }
 
 
@@ -699,11 +852,16 @@ adicionales.forEach(item => carrito.push(item));
       const li = document.createElement("li");
       li.classList.add("flex", "justify-between", "items-center");
       li.innerHTML = `
-        <span>${item.nombre} x${item.cantidad} - $${item.precio * item.cantidad}</span>
-        <div>
-          <button onclick="cambiarCantidad(${index}, -1)" class="px-2 bg-gray-200 rounded">-</button>
-          <button onclick="cambiarCantidad(${index}, 1)" class="px-2 bg-gray-200 rounded ml-1">+</button>
-        </div>`;
+  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2">
+    <div class="text-left text-sm sm:text-base font-medium break-words max-w-[300px]">
+      ${item.nombre} x${item.cantidad} - $${item.precio * item.cantidad}
+    </div>
+    <div class="flex items-center gap-2 min-w-[90px] justify-end">
+      <button onclick="cambiarCantidad(${index}, -1)" class="px-2 py-1 bg-gray-200 rounded">-</button>
+      <button onclick="cambiarCantidad(${index}, 1)" class="px-2 py-1 bg-gray-200 rounded">+</button>
+    </div>
+  </div>`;
+
       lista.appendChild(li);
     });
 
@@ -883,6 +1041,55 @@ function generarControlesToppings(prefix = "") {
     </div>
   `).join("");
 }
+function agregarSiNoExiste(item) {
+  const igual = carrito.find(existing => productosIguales(existing, item));
+
+  if (igual) {
+    igual.cantidad += item.cantidad;
+  } else {
+    carrito.push(item);
+  }
+}
+
+function arraysIguales(arr1, arr2) {
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
+  if (arr1.length !== arr2.length) return false;
+  const sorted1 = [...arr1].sort();
+  const sorted2 = [...arr2].sort();
+  return sorted1.every((val, index) => val === sorted2[index]);
+}
+
+function productosIguales(a, b) {
+  // Comparar tipo y nombre (muy importantes)
+  if (a.tipo !== b.tipo || a.nombre !== b.nombre) return false;
+
+  // Comparar precio si aplica
+  if (a.precio !== b.precio) return false;
+
+  // Comparar proteína
+  if (a.proteina !== b.proteina) return false;
+
+  // Comparar base (singular) y bases (plural)
+  if (a.base !== b.base) return false;
+  if (!arraysIguales(a.bases || [], b.bases || [])) return false;
+
+  // Comparar bebida
+  if (a.bebida !== b.bebida) return false;
+
+  // Comparar toppings
+  if (!arraysIguales(a.toppings || [], b.toppings || [])) return false;
+
+  // Comparar adicionales
+  if (!arraysIguales(a.adicionales || [], b.adicionales || [])) return false;
+
+  // Comparar postre y ensalada si se agregan solos
+  if (a.postre !== b.postre) return false;
+  if (a.ensalada !== b.ensalada) return false;
+
+  return true;
+}
+
+
 function mostrarContenido() {
   document.getElementById("pantallaBienvenida").classList.add("hidden");
   document.getElementById("contenidoPrincipal").classList.remove("hidden");
@@ -892,7 +1099,46 @@ function entrarSitio() {
       document.getElementById("pantallaBienvenida").style.display = "none";
       document.body.classList.remove("overflow-hidden");
     }
+const fechaObjetivo = new Date("2025-07-21T23:59:59").getTime(); // cambia fecha si es necesario
 
+  const intervalo = setInterval(() => {
+    const ahora = new Date().getTime();
+    const diferencia = fechaObjetivo - ahora;
+
+    if (diferencia <= 0) {
+      clearInterval(intervalo);
+      document.getElementById("pantallaCuentaRegresiva").style.display = "none";
+      document.body.classList.remove("overflow-hidden");
+      return;
+    }
+
+    const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+    document.getElementById("cuentaRegresiva").innerHTML =
+      `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+  }, 1000);
 </script>
+<!--
+<!-- Pantalla de cuenta regresiva -->
+<!--<div id="pantallaCuentaRegresiva" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+  <!-- Video de fondo -->
+  <!--<video autoplay muted loop class="absolute inset-0 w-full h-full object-cover">
+    <source src="img/divino-vid.mp4" type="video/mp4">
+    Tu navegador no soporta video HTML5.
+  </video>
+
+<!-- Contador (vinotinto neón) -->
+<!--<div class="absolute top-10 left-1/2 transform -translate-x-1/2 z-10 text-6xl sm:text-7xl font-['Lust_Slim'] tracking-wider text-center scale-[1.9] neon-vinotinto">
+  <div id="cuentaRegresiva"></div>
+</div>
+
+<!-- Frase abajo (vinotinto neón) -->
+<!--<div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 text-5xl sm:text-6xl font-['Lust_Slim'] text-center neon-vinotinto">
+  ¡Falta poco para pecar juntos!
+</div>-->
+
 </body>
 </html>
