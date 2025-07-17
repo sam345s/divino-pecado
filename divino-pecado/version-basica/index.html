@@ -70,19 +70,39 @@
   </style>
 </head>
 
-<div id="contenidoPrincipal" class="hidden">
-  <!-- TODO tu contenido actual (desde la parte de max-w-3xl...) -->
-</div>
+
 
 <body class="overflow-hidden">
-  <!-- Pantalla de bienvenida -->
-<div id="pantallaBienvenida" class="fixed inset-0 z-50 bg-[#89d1f6] flex flex-col items-center justify-center">
-<img src="img/logo-divino.png" alt="Logo Divino Pecado" class="w-80 mb-10">
-    <button onclick="entrarSitio()" class="bg-[#89d1f6] text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-[#68b8e0] transition">
+<body class="overflow-hidden">
+  <!-- Pantalla de cuenta regresiva -->
+  <div id="pantallaCuentaRegresiva" class="fixed inset-0 z-50 flex items-center justify-center bg-transparent">
+    <!-- Video de fondo -->
+    <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover z-0">
+      <source src="img/divino-vid.mp4" type="video/mp4">
+      Tu navegador no soporta video.
+    </video>
+
+    <!-- Contador -->
+    <div class="absolute top-10 left-1/2 transform -translate-x-1/2 z-10 text-6xl sm:text-7xl tracking-wider text-center scale-[1.9] neon-vinotinto" style="font-family: 'Playfair Display', serif;">
+      <div id="cuentaRegresiva"></div>
+    </div>
+
+    <!-- Frase -->
+    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 text-5xl sm:text-6xl text-center neon-vinotinto" style="font-family: 'Playfair Display', serif;">
+      ¡Falta poco para pecar juntos!
+    </div>
+  </div>
+
+  <!-- Pantalla de bienvenida (inicialmente oculta) -->
+  <div id="pantallaBienvenida" class="fixed inset-0 hidden z-50 bg-[#89d1f6] flex flex-col items-center justify-center">
+    <img src="img/logo-divino.png" alt="Logo Divino Pecado" class="w-80 mb-10">
+    <button onclick="mostrarContenido()" class="bg-[#89d1f6] text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-[#68b8e0] transition">
       Entrar
     </button>
   </div>
 
+  <!-- Contenido principal (oculto inicialmente) -->
+  <div id="contenidoPrincipal" class="hidden">
   <div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md space-y-6">
     <h1 class="text-3xl font-bold text-center">Bienvenido a Divino Pecado!</h1>
 
@@ -1107,11 +1127,13 @@ const fechaObjetivo = new Date("2025-07-21T23:59:59").getTime(); // cambia fecha
     const diferencia = fechaObjetivo - ahora;
 
     if (diferencia <= 0) {
-      clearInterval(intervalo);
-      document.getElementById("pantallaCuentaRegresiva").style.display = "none";
-      document.body.classList.remove("overflow-hidden");
-      return;
-    }
+  clearInterval(intervalo);
+  document.getElementById("pantallaCuentaRegresiva").style.display = "none";
+  document.getElementById("pantallaBienvenida").classList.remove("hidden");
+  document.body.classList.remove("overflow-hidden");
+  return;
+}
+
 
     const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
     const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -1122,24 +1144,6 @@ const fechaObjetivo = new Date("2025-07-21T23:59:59").getTime(); // cambia fecha
       `${dias}d ${horas}h ${minutos}m ${segundos}s`;
   }, 1000);
 </script>
-
-<!-- Pantalla de cuenta regresiva -->
-<div id="pantallaCuentaRegresiva" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
-  <!-- Video de fondo -->
-  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover">
-    <source src="img/divino-vid.mp4" type="video/mp4">
-    Tu navegador no soporta video HTML5.
-  </video>
-
-<!-- Contador (vinotinto neón) -->
-<div class="absolute top-10 left-1/2 transform -translate-x-1/2 z-10 text-6xl sm:text-7xl tracking-wider text-center scale-[1.9] neon-vinotinto" style="font-family: 'Playfair Display', serif;">
-  <div id="cuentaRegresiva"></div>
-</div>
-
-<!-- Frase abajo (vinotinto neón) -->
-<div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 text-5xl sm:text-6xl text-center neon-vinotinto" style="font-family: 'Playfair Display', serif;">
-  ¡Falta poco para pecar juntos!
-</div>
 
 </body>
 </html>
