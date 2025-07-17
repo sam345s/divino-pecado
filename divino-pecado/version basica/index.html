@@ -4,24 +4,77 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Divino Pecado</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Montserrat & Lust Slim -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
+  <link href="https://fonts.cdnfonts.com/css/lust-slim" rel="stylesheet" />
+
+  <!-- Tu hoja de estilos -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Estilos personalizados -->
   <style>
+    /* Tipografía general */
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #89d1f6 !important;
+    }
+
+    /* Tipografía decorativa solo para el título */
+    .titulo-logo {
+      font-family: 'Lust Slim', serif;
+    }
+
+    /* Botones globales */
+    button {
+      background-color: #89d1f6 !important;
+      color: white !important;
+      cursor: default !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Contadores personalizados */
     .counter {
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
+
     .counter button {
-      padding: 0.2rem 0.5rem;
-      background-color: #e2e8f0;
-      border-radius: 0.25rem;
+      padding: 0.2rem 0.6rem;
+      background-color: #89d1f6 !important;
+      color: white !important;
+      border-radius: 0.375rem;
     }
+
+    /* Remover colores de error y hover verdes */
+    .hover\:bg-green-600:hover {
+      background-color: #89d1f6 !important;
+    }
+
     .error-border {
       border-color: #ef4444 !important;
     }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+
+<div id="contenidoPrincipal" class="hidden">
+  <!-- TODO tu contenido actual (desde la parte de max-w-3xl...) -->
+</div>
+
+<body class="overflow-hidden">
+  <!-- Pantalla de bienvenida -->
+<div id="pantallaBienvenida" class="fixed inset-0 z-50 bg-[#89d1f6] flex flex-col items-center justify-center">
+<img src="img/logo-divino.png" alt="Logo Divino Pecado" class="w-80 mb-10">
+    <button onclick="entrarSitio()" class="bg-[#89d1f6] text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-[#68b8e0] transition">
+      Entrar
+    </button>
+  </div>
+
   <div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md space-y-6">
     <h1 class="text-3xl font-bold text-center">Bienvenido a Divino Pecado!</h1>
 
@@ -57,6 +110,11 @@
 
     <!-- Contenedor dinámico de menú -->
     <div id="contenedorMenu" class="space-y-4"></div>
+    <!-- Imagen del producto seleccionado -->
+<div id="imagenProducto" class="mt-4 text-center">
+  <img id="imgSeleccionada" src="" alt="Producto seleccionado" class="mx-auto max-h-[400px] w-auto hidden rounded-xl shadow-lg" />
+</div>
+
 
     <!-- Adiciones globales -->
     <div class="space-y-4">
@@ -96,8 +154,13 @@
           <option value="Limón">Limón</option>
           <option value="Maracuyá">Maracuyá</option>
           <option value="Frutos rojos">Frutos rojos</option>
-          <option value="Leche de coco">Leche de coco</option>
+          <option value="Limonada de coco">Limonada de coco</option>
         </select>
+        <!-- Imagen del postre seleccionado -->
+<div id="imagenPostre" class="mt-4 text-center">
+  <img id="imgPostreSeleccionado" src="" alt="Imagen del postre" class="mx-auto max-h-64 hidden rounded shadow-md" />
+</div>
+
       </label>
     </div>
 
@@ -124,12 +187,22 @@
   </button>
 </div>
 
-<!-- Sección de confirmación -->
-<div id="seccionConfirmacion" class="max-w-3xl mx-auto mt-4 p-4 bg-white rounded-xl shadow-md hidden text-center">
-  <button onclick="confirmarPedidoFinal()" class="bg-green-700 text-white px-4 py-2 rounded">
-    Confirmar pedido final
-  </button>
+<div id="seccionConfirmacion" class="hidden text-center mt-6 space-y-6 max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg border">
+  <p class="text-green-600 text-xl font-semibold">✅ ¡Tu pedido fue enviado correctamente!</p>
+
+  <div>
+    <p class="text-gray-700 text-base mb-2">1️⃣ Escanea este código QR para pagar por Nequi:</p>
+    <img src="img/qr-nequi.png" alt="QR Nequi" class="mx-auto w-64 h-auto rounded-lg shadow-md border" />
+  </div>
+
+  <p class="text-gray-700 text-base">2️⃣ Luego, envía el comprobante al grupo de WhatsApp según tu universidad:</p>
+
+  <a id="btnWhatsapp" href="#" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow transition">
+    Ir al grupo de WhatsApp
+  </a>
 </div>
+
+
 
   <script>
   const contenedorMenu = document.getElementById('contenedorMenu');
@@ -137,6 +210,15 @@
   function mostrarMenu() {
     const opcion = document.getElementById("opcion").value;
     contenedorMenu.innerHTML = "";
+    mostrarImagen(""); // Oculta imagen general
+
+    // Oculta imagen de sandwich si se cambia a otra categoría
+const imgSandwich = document.getElementById("imgSandwich");
+if (imgSandwich) {
+  imgSandwich.classList.add("hidden");
+  imgSandwich.src = "";
+}
+
     if (opcion === "bowl") {
       contenedorMenu.innerHTML = `
         <label class="block">
@@ -151,170 +233,186 @@
       `;
       document.getElementById("tipoBowl").addEventListener("change", mostrarOpcionesBowl);
       } else if (opcion === "sandwich") {
-    contenedorMenu.innerHTML = `
-      <label class="block">
-        <span class="text-gray-700">Selecciona tu sandwich:</span>
-        <select id="tipoSandwich" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
-          <option value="Seneca">Seneca</option>
-          <option value="Anglicano">Anglicano</option>
-          <option value="Paraíso">Paraíso</option>
-          <option value="Mammon">Mammon</option>
-          <option value="Averno">Averno</option>
-        </select>
-      </label>`;
+  contenedorMenu.innerHTML = `
+    <label class="block">
+      <span class="text-gray-700">Selecciona tu sandwich:</span>
+      <select id="tipoSandwich" onchange="mostrarImagenSandwich()" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+  <option value="Seneca">Seneca</option>
+  <option value="Anglicano">Anglicano</option>
+  <option value="Paraiso">Paraíso</option>
+  <option value="Mammon">Mammon</option>
+  <option value="Averno">Averno</option>
+</select>
+    </label>`;
+  mostrarImagen(""); // limpia si cambia a sandwich pero aún no selecciona
  } else if (opcion === "nachos") {
+  mostrarImagen("nachos.jpg");
   contenedorMenu.innerHTML = `
-    <label class="block">
-      <span class="text-gray-700">Selecciona tu proteína:</span>
-      <select id="proteinaNachos" class="mt-1 block w-full border rounded p-2">
-        <option value="">Elige una opción</option>
-        <option value="Carne ropa vieja">Carne ropa vieja</option>
-        <option value="Pollo a la plancha">Pollo a la plancha</option>
-        <option value="Pechuga en ají de gallina">Pechuga en ají de gallina</option>
-        <option value="Carne en cubos">Carne en cubos</option>
-        <option value="Albóndigas">Albóndigas</option>
-        <option value="Cerdo BBQ">Cerdo BBQ</option>
-        <option value="Tartar de pollo">Tartar de pollo</option>
-        <option value="Carne vegana">Carne vegana</option>
-        <option value="Pollo vegano">Pollo vegano</option>
-        <option value="Rollitos primavera">Rollitos primavera</option>
-      </select>
-    </label>
+    <div class="space-y-6"> <!-- Espaciado vertical entre secciones -->
 
-    <div>
-      <span class="text-gray-700">Selecciona tus toppings (máx. 4):</span>
-      <div id="contenedorToppingsNachos" class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-        <label class="flex items-center gap-2"><input type="checkbox" value="Pico de gallo"> Pico de gallo</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Maíz tierno"> Maíz tierno</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Guacamole"> Guacamole</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Lechuga en julianas"> Lechuga en julianas</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Sour cream"> Sour cream</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Pimentones"> Pimentones</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Queso doble crema"> Queso doble crema</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Cebolla de la casa"> Cebolla de la casa</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Zanahoria de la casa"> Zanahoria de la casa</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Plátano maduro"> Plátano maduro</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Jalapeños"> Jalapeños</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Frijoles"> Frijoles</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Pepinillos"> Pepinillos</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Hogao"> Hogao</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Brócoli"> Brócoli</label>
-      </div>
+      <!-- Proteínas -->
+      <label class="block">
+        <span class="text-gray-700 font-bold text-lg">Proteína (1 incluida, adicionales +$6.000):</span>
+        <div class="space-y-2 mt-2">
+          ${generarControlesProteinas("nachoprot")}
+        </div>
+      </label>
+
+      <!-- Toppings -->
+      <label class="block">
+        <span class="text-gray-700 font-bold text-lg">Toppings (4 incluidos, adicionales +$2.500):</span>
+        <div class="space-y-2 mt-2">
+          ${generarControlesToppings("nachotop")}
+        </div>
+      </label>
+
     </div>
   `;
 
-  limitarSeleccionToppings("contenedorToppingsNachos", 4);
   } else if (opcion === "papaslocas") {
+  mostrarImagen("papaslocas.png");
   contenedorMenu.innerHTML = `
-    <label class="block">
-      <span class="text-gray-700">Selecciona tu proteína:</span>
-      <select id="proteinaPapas" class="mt-1 block w-full border rounded p-2">
-        <option value="">Elige una opción</option>
-        <option value="Carne ropa vieja">Carne ropa vieja</option>
-        <option value="Pollo a la plancha">Pollo a la plancha</option>
-        <option value="Pechuga en ají de gallina">Pechuga en ají de gallina</option>
-        <option value="Carne en cubos">Carne en cubos</option>
-        <option value="Albóndigas">Albóndigas</option>
-        <option value="Cerdo BBQ">Cerdo BBQ</option>
-        <option value="Tartar de pollo">Tartar de pollo</option>
-        <option value="Carne vegana">Carne vegana</option>
-        <option value="Pollo vegano">Pollo vegano</option>
-        <option value="Rollitos primavera">Rollitos primavera</option>
-      </select>
-    </label>
+    <div class="space-y-6">
 
-    <div>
-      <span class="text-gray-700">Selecciona tus toppings (máx. 3):</span>
-      <div id="contenedorToppingsPapas" class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-        <label class="flex items-center gap-2"><input type="checkbox" value="Pico de gallo"> Pico de gallo</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Maíz tierno"> Maíz tierno</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Guacamole"> Guacamole</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Lechuga en julianas"> Lechuga en julianas</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Sour cream"> Sour cream</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Pimentones"> Pimentones</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Queso doble crema"> Queso doble crema</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Cebolla de la casa"> Cebolla de la casa</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Zanahoria de la casa"> Zanahoria de la casa</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Plátano maduro"> Plátano maduro</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Jalapeños"> Jalapeños</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Frijoles"> Frijoles</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Pepinillos"> Pepinillos</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Hogao"> Hogao</label>
-        <label class="flex items-center gap-2"><input type="checkbox" value="Brócoli"> Brócoli</label>
-      </div>
+      <!-- Proteínas -->
+      <label class="block">
+        <span class="text-gray-700 font-bold text-lg">Proteína (1 incluida, adicionales +$6.000):</span>
+        <div class="space-y-2 mt-2">
+          ${generarControlesProteinas("papasprot")}
+        </div>
+      </label>
+
+      <!-- Toppings -->
+      <label class="block">
+        <span class="text-gray-700 font-bold text-lg">Toppings (3 incluidos, adicionales +$2.500):</span>
+        <div class="space-y-2 mt-2">
+          ${generarControlesToppings("papastop")}
+        </div>
+      </label>
+
     </div>
   `;
-
-  limitarSeleccionToppings("contenedorToppingsPapas", 3);
 }}
 
 
+
   function mostrarOpcionesBowl() {
-    const tipo = document.getElementById("tipoBowl").value;
+  const tipo = document.getElementById("tipoBowl").value;
+    // Ocultar imagen del bowl anterior si existe
+const imgBowl = document.getElementById("imgSeleccionada");
+if (imgBowl) {
+  imgBowl.classList.add("hidden");
+  imgBowl.src = "";
+}
     const contenedor = document.getElementById("bowlOpciones");
     contenedor.innerHTML = "";
 
     if (tipo === "semana") {
-      contenedor.innerHTML = `
-        <label class="block">
-          <span class="text-gray-700">Elige opción de la semana:</span>
-          <select class="mt-1 block w-full border border-gray-300 rounded-md p-2">
-            <option>Criollo</option>
-            <option>Italiano</option>
-          </select>
-        </label>`;
+  contenedor.innerHTML = `
+    <label class="block">
+      <span class="text-gray-700">Elige opción de la semana:</span>
+      <select class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+        <option>Criollo</option>
+        <option>Italiano</option>
+      </select>
+    </label>`;
+
+  const selectBowlSemana = contenedor.querySelector("select");
+  selectBowlSemana.addEventListener("change", () => {
+    const seleccion = selectBowlSemana.value.toLowerCase();
+    mostrarImagen(`${seleccion}.jpg`);
+  });
     } else if (tipo === "armar") {
       contenedor.innerHTML = `
-  <div class="space-y-4">
-    <!-- Base -->
-    <label class="block">
-      <span class="text-gray-700">Base (1 incluida adicional 4500$):</span>
-      <div class="space-y-2">
-        <div class="counter">Arroz <button onclick="cambiar('base1', -1)">-</button><span id="base1">0</span><button onclick="cambiar('base1', 1)">+</button></div>
-        <div class="counter">Arroz integral <button onclick="cambiar('base2', -1)">-</button><span id="base2">0</span><button onclick="cambiar('base2', 1)">+</button></div>
-        <div class="counter">Macarrones <button onclick="cambiar('base3', -1)">-</button><span id="base3">0</span><button onclick="cambiar('base3', 1)">+</button></div>
-        <div class="counter">Lechuga <button onclick="cambiar('base4', -1)">-</button><span id="base4">0</span><button onclick="cambiar('base4', 1)">+</button></div>
+  <div class="space-y-6">
+  <!-- Base -->
+  <label class="block">
+    <span class="text-gray-900 font-bold text-lg">Base 1 incluida ($4.500 C/U Adicional):</span>
+    <div class="space-y-2 mt-2">
+      <div class="flex justify-between items-center">
+        <span>Arroz</span>
+        <div class="flex items-center gap-2">
+          <button onclick="cambiar('base1', -1)" class="px-2 bg-gray-200 rounded">−</button>
+          <span id="base1" class="min-w-[20px] text-center">0</span>
+          <button onclick="cambiar('base1', 1)" class="px-2 bg-gray-200 rounded">+</button>
+        </div>
       </div>
-    </label>
+      <div class="flex justify-between items-center">
+        <span>Arroz integral</span>
+        <div class="flex items-center gap-2">
+          <button onclick="cambiar('base2', -1)" class="px-2 bg-gray-200 rounded">−</button>
+          <span id="base2" class="min-w-[20px] text-center">0</span>
+          <button onclick="cambiar('base2', 1)" class="px-2 bg-gray-200 rounded">+</button>
+        </div>
+      </div>
+      <div class="flex justify-between items-center">
+        <span>Macarrones</span>
+        <div class="flex items-center gap-2">
+          <button onclick="cambiar('base3', -1)" class="px-2 bg-gray-200 rounded">−</button>
+          <span id="base3" class="min-w-[20px] text-center">0</span>
+          <button onclick="cambiar('base3', 1)" class="px-2 bg-gray-200 rounded">+</button>
+        </div>
+      </div>
+      <div class="flex justify-between items-center">
+        <span>Lechuga</span>
+        <div class="flex items-center gap-2">
+          <button onclick="cambiar('base4', -1)" class="px-2 bg-gray-200 rounded">−</button>
+          <span id="base4" class="min-w-[20px] text-center">0</span>
+          <button onclick="cambiar('base4', 1)" class="px-2 bg-gray-200 rounded">+</button>
+        </div>
+      </div>
+    </div>
+  </label>
 
-    <!-- Proteína -->
-    <label class="block">
-      <span class="text-gray-700">Proteína (1 incluida, adicionales +$6.000):</span>
-      <div class="space-y-2">
-        <div class="counter">Carne ropa vieja <button onclick="cambiar('prot1', -1)">-</button><span id="prot1">0</span><button onclick="cambiar('prot1', 1)">+</button></div>
-        <div class="counter">Pollo a la plancha <button onclick="cambiar('prot2', -1)">-</button><span id="prot2">0</span><button onclick="cambiar('prot2', 1)">+</button></div>
-        <div class="counter">Pechuga en ají de gallina <button onclick="cambiar('prot3', -1)">-</button><span id="prot3">0</span><button onclick="cambiar('prot3', 1)">+</button></div>
-        <div class="counter">Carne en cubos <button onclick="cambiar('prot4', -1)">-</button><span id="prot4">0</span><button onclick="cambiar('prot4', 1)">+</button></div>
-        <div class="counter">Albóndigas <button onclick="cambiar('prot5', -1)">-</button><span id="prot5">0</span><button onclick="cambiar('prot5', 1)">+</button></div>
-        <div class="counter">Cerdo BBQ <button onclick="cambiar('prot6', -1)">-</button><span id="prot6">0</span><button onclick="cambiar('prot6', 1)">+</button></div>
-        <div class="counter">Tartar de pollo <button onclick="cambiar('prot7', -1)">-</button><span id="prot7">0</span><button onclick="cambiar('prot7', 1)">+</button></div>
-        <div class="counter">Carne vegana <button onclick="cambiar('prot8', -1)">-</button><span id="prot8">0</span><button onclick="cambiar('prot8', 1)">+</button></div>
-        <div class="counter">Pollo vegano <button onclick="cambiar('prot9', -1)">-</button><span id="prot9">0</span><button onclick="cambiar('prot9', 1)">+</button></div>
-        <div class="counter">Rollitos primavera <button onclick="cambiar('prot10', -1)">-</button><span id="prot10">0</span><button onclick="cambiar('prot10', 1)">+</button></div>
-      </div>
-    </label>
+  <!-- Proteína -->
+  <label class="block">
+    <span class="text-gray-900 font-bold text-lg">Proteína 1 incluida ($6.000 C/U Adicional):</span>
+    <div class="space-y-2 mt-2">
+      <div class="flex justify-between items-center"><span>Carne ropa vieja</span><div class="flex items-center gap-2"><button onclick="cambiar('prot1', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot1" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot1', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Pollo a la plancha</span><div class="flex items-center gap-2"><button onclick="cambiar('prot2', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot2" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot2', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Pechuga en ají de gallina</span><div class="flex items-center gap-2"><button onclick="cambiar('prot3', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot3" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot3', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Carne en cubos</span><div class="flex items-center gap-2"><button onclick="cambiar('prot4', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot4" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot4', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Albóndigas</span><div class="flex items-center gap-2"><button onclick="cambiar('prot5', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot5" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot5', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Cerdo BBQ</span><div class="flex items-center gap-2"><button onclick="cambiar('prot6', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot6" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot6', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Tartar de pollo</span><div class="flex items-center gap-2"><button onclick="cambiar('prot7', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot7" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot7', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Carne vegana</span><div class="flex items-center gap-2"><button onclick="cambiar('prot8', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot8" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot8', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Pollo vegano</span><div class="flex items-center gap-2"><button onclick="cambiar('prot9', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot9" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot9', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Rollitos primavera</span><div class="flex items-center gap-2"><button onclick="cambiar('prot10', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot10" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot10', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    </div>
+  </label>
 
-    <!-- Toppings -->
-    <label class="block">
-      <span class="text-gray-700">Toppings (5 incluidos, adicionales +$2.500):</span>
-      <div class="space-y-2">
-        <div class="counter">Pico de gallo <button onclick="cambiar('top1', -1)">-</button><span id="top1">0</span><button onclick="cambiar('top1', 1)">+</button></div>
-        <div class="counter">Maíz tierno <button onclick="cambiar('top2', -1)">-</button><span id="top2">0</span><button onclick="cambiar('top2', 1)">+</button></div>
-        <div class="counter">Guacamole <button onclick="cambiar('top3', -1)">-</button><span id="top3">0</span><button onclick="cambiar('top3', 1)">+</button></div>
-        <div class="counter">Lechuga en julianas <button onclick="cambiar('top4', -1)">-</button><span id="top4">0</span><button onclick="cambiar('top4', 1)">+</button></div>
-        <div class="counter">Sour cream <button onclick="cambiar('top5', -1)">-</button><span id="top5">0</span><button onclick="cambiar('top5', 1)">+</button></div>
-        <div class="counter">Pimentones <button onclick="cambiar('top6', -1)">-</button><span id="top6">0</span><button onclick="cambiar('top6', 1)">+</button></div>
-        <div class="counter">Queso doble crema <button onclick="cambiar('top7', -1)">-</button><span id="top7">0</span><button onclick="cambiar('top7', 1)">+</button></div>
-        <div class="counter">Cebolla de la casa <button onclick="cambiar('top8', -1)">-</button><span id="top8">0</span><button onclick="cambiar('top8', 1)">+</button></div>
-        <div class="counter">Zanahoria de la casa <button onclick="cambiar('top9', -1)">-</button><span id="top9">0</span><button onclick="cambiar('top9', 1)">+</button></div>
-        <div class="counter">Plátano maduro <button onclick="cambiar('top10', -1)">-</button><span id="top10">0</span><button onclick="cambiar('top10', 1)">+</button></div>
-        <div class="counter">Jalapeños <button onclick="cambiar('top11', -1)">-</button><span id="top11">0</span><button onclick="cambiar('top11', 1)">+</button></div>
-        <div class="counter">Frijoles <button onclick="cambiar('top12', -1)">-</button><span id="top12">0</span><button onclick="cambiar('top12', 1)">+</button></div>
-        <div class="counter">Pepinillos <button onclick="cambiar('top13', -1)">-</button><span id="top13">0</span><button onclick="cambiar('top13', 1)">+</button></div>
-        <div class="counter">Hogao <button onclick="cambiar('top14', -1)">-</button><span id="top14">0</span><button onclick="cambiar('top14', 1)">+</button></div>
-        <div class="counter">Brócoli <button onclick="cambiar('top15', -1)">-</button><span id="top15">0</span><button onclick="cambiar('top15', 1)">+</button></div>
-      </div>
-    </label>
+  <!-- Toppings -->
+<label class="block">
+  <span class="text-gray-900 font-bold text-lg">Toppings 5 incluidos ($2.500 C/U Adicional):</span>
+  <div class="space-y-2 mt-2">
+    <div class="flex justify-between items-center"><span>Pico de gallo</span><div class="flex items-center gap-2"><button onclick="cambiar('top1', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top1" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top1', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Maíz tierno</span><div class="flex items-center gap-2"><button onclick="cambiar('top2', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top2" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top2', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Guacamole</span><div class="flex items-center gap-2"><button onclick="cambiar('top3', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top3" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top3', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Lechuga en julianas</span><div class="flex items-center gap-2"><button onclick="cambiar('top4', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top4" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top4', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Sour cream</span><div class="flex items-center gap-2"><button onclick="cambiar('top5', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top5" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top5', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Pimentones</span><div class="flex items-center gap-2"><button onclick="cambiar('top6', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top6" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top6', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Queso doble crema</span><div class="flex items-center gap-2"><button onclick="cambiar('top7', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top7" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top7', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Cebolla de la casa</span><div class="flex items-center gap-2"><button onclick="cambiar('top8', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top8" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top8', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Zanahoria de la casa</span><div class="flex items-center gap-2"><button onclick="cambiar('top9', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top9" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top9', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Plátano maduro</span><div class="flex items-center gap-2"><button onclick="cambiar('top10', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top10" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top10', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Jalapeños</span><div class="flex items-center gap-2"><button onclick="cambiar('top11', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top11" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top11', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Frijoles</span><div class="flex items-center gap-2"><button onclick="cambiar('top12', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top12" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top12', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Pepinillos</span><div class="flex items-center gap-2"><button onclick="cambiar('top13', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top13" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top13', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Hogao</span><div class="flex items-center gap-2"><button onclick="cambiar('top14', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top14" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top14', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+    <div class="flex justify-between items-center"><span>Brócoli</span><div class="flex items-center gap-2"><button onclick="cambiar('top15', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="top15" class="min-w-[20px] text-center">0</span><button onclick="cambiar('top15', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+  </div>
+</label>
+<!-- Bebida incluida -->
+<label class="block mt-6">
+  <span class="text-gray-900 font-bold text-lg">Bebida (1 incluida):</span>
+  <select id="bebidaBowl" class="mt-2 block w-full border border-gray-300 rounded-md p-2">
+    <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) - $3.500</option>
+    <option value="Agua Cristal con gas (600 ml)">Agua Cristal con gas (600 ml) - $3.500</option>
+    <option value="Gaseosa (600 ml)">Gaseosa (600 ml) - $3.500</option>
+    <option value="Gaseosa (250 ml)">Gaseosa (250 ml) - $3.000</option>
+  </select>
+</label>
+
   </div>`;
       }
     }
@@ -366,10 +464,35 @@
     actualizarCarrito();
   }
  function efectuarPago() {
-  alert("✅ Simulación de pago completado con éxito.");
-  document.getElementById("seccionPago").classList.add("hidden");
-  document.getElementById("seccionConfirmacion").classList.remove("hidden");
+  const universidadSelect = document.querySelectorAll('select')[0];
+  const universidad = universidadSelect.value.toLowerCase();
+  const link = enlacesWhatsapp[universidad];
+
+  const seccionConfirmacion = document.getElementById("seccionConfirmacion");
+  const seccionPago = document.getElementById("seccionPago");
+  const btnWhatsapp = document.getElementById("btnWhatsapp");
+
+  // Mostrar sección QR y WhatsApp
+  seccionConfirmacion.classList.remove("hidden");
+
+  // Asignar enlace al botón de WhatsApp
+  if (link) {
+    btnWhatsapp.href = link;
+    btnWhatsapp.textContent = "Ir al grupo de WhatsApp";
+  } else {
+    btnWhatsapp.href = "#";
+    btnWhatsapp.textContent = "Grupo no disponible";
+  }
+
+  // Mostrar botón final de confirmación dentro de la sección de confirmación
+  seccionPago.classList.remove("hidden");
+  seccionPago.innerHTML = `
+    <button onclick="confirmarPedidoFinal()" class="bg-green-600 text-white px-4 py-2 rounded mt-4">
+      Confirmar Pedido Final
+    </button>
+  `;
 }
+
 
   let carrito = [];
 
@@ -380,7 +503,7 @@ function agregarAlCarritoDesdeSeleccion() {
     return;
   }
 
-  carrito = [];
+  
 
   if (opcion === "bowl") {
     const tipoBowl = document.getElementById("tipoBowl").value;
@@ -396,59 +519,165 @@ function agregarAlCarritoDesdeSeleccion() {
     if (tipoBowl === "semana") {
       carrito.push({ nombre: "Bowl de la semana", precio: 18000, cantidad: 1 });
     } else {
-      carrito.push({ nombre: "Bowl personalizado", precio: 21000, cantidad: 1 });
-      const adicionales = agregarAdicionalesContadores();
-      adicionales.forEach(item => carrito.push(item));
-    }
+// ✅ Bowl personalizado
+// Recolectar cantidades
+const basesIds = ['base1', 'base2', 'base3', 'base4'];
+const basesNombres = ['Arroz', 'Arroz integral', 'Macarrones', 'Lechuga'];
+const protIds = ['prot1','prot2','prot3','prot4','prot5','prot6','prot7','prot8','prot9','prot10'];
+const protNombres = [
+  'Carne ropa vieja', 'Pollo a la plancha', 'Pechuga en ají de gallina', 'Carne en cubos',
+  'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo', 'Carne vegana', 'Pollo vegano', 'Rollitos primavera'
+];
+const topIds = [
+  'top1','top2','top3','top4','top5','top6','top7','top8','top9','top10',
+  'top11','top12','top13','top14','top15'
+];
+const topNombres = [
+  "Pico de gallo", "Maíz tierno", "Guacamole", "Lechuga en julianas",
+  "Sour cream", "Pimentones", "Queso doble crema", "Cebolla de la casa",
+  "Zanahoria de la casa", "Plátano maduro", "Jalapeños", "Frijoles",
+  "Pepinillos", "Hogao", "Brócoli"
+];
+
+// Recoger cantidades
+const basesSeleccionadas = basesIds
+  .map((id, i) => {
+    const cant = parseInt(document.getElementById(id).textContent);
+    return cant > 0 ? `${basesNombres[i]} x${cant}` : null;
+  })
+  .filter(Boolean);
+
+const protSeleccionadas = protIds
+  .map((id, i) => {
+    const cant = parseInt(document.getElementById(id).textContent);
+    return cant > 0 ? `${protNombres[i]} x${cant}` : null;
+  })
+  .filter(Boolean);
+
+const topSeleccionados = topIds
+  .map((id, i) => {
+    const cant = parseInt(document.getElementById(id).textContent);
+    return cant > 0 ? `${topNombres[i]} x${cant}` : null;
+  })
+  .filter(Boolean);
+
+// Bebida incluida
+const bebidaIncluida = document.getElementById("bebidaBowl")?.value;
+
+// Armar descripción completa
+let descripcion = `Bowl personalizado`;
+if (basesSeleccionadas.length > 0) {
+  descripcion += `\nBases: ${basesSeleccionadas.join(", ")}`;
+}
+if (protSeleccionadas.length > 0) {
+  descripcion += `\nProteínas: ${protSeleccionadas.join(", ")}`;
+}
+if (topSeleccionados.length > 0) {
+  descripcion += `\nToppings: ${topSeleccionados.join(", ")}`;
+}
+if (bebidaIncluida) {
+  descripcion += `\nBebida incluida: ${bebidaIncluida}`;
+}
+
+// Agregar al carrito como un solo ítem
+carrito.push({ nombre: descripcion, precio: 21000, cantidad: 1 });
+
+// Luego agregamos los adicionales como ítems separados
+const adicionales = agregarAdicionalesContadores();
+adicionales.forEach(item => carrito.push(item));
+}
 
   } else if (opcion === "sandwich") {
     const tipoSandwich = document.getElementById("tipoSandwich").value;
     carrito.push({ nombre: `Sandwich: ${tipoSandwich}`, precio: 19000, cantidad: 1 });
 
   } else if (opcion === "nachos") {
-  const prot = document.getElementById("proteinaNachos")?.value;
-  const checks = document.querySelectorAll("#contenedorToppingsNachos input[type='checkbox']:checked");
-  const tops = Array.from(checks).map(o => o.value);
+  const protIds = ['nachoprot1','nachoprot2','nachoprot3','nachoprot4','nachoprot5','nachoprot6','nachoprot7','nachoprot8','nachoprot9','nachoprot10'];
+  const protNombres = [
+    'Carne ropa vieja', 'Pollo a la plancha', 'Pechuga en ají de gallina', 'Carne en cubos',
+    'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo', 'Carne vegana', 'Pollo vegano', 'Rollitos primavera'
+  ];
+  const topIds = ['nachotop1','nachotop2','nachotop3','nachotop4','nachotop5','nachotop6','nachotop7','nachotop8','nachotop9','nachotop10','nachotop11','nachotop12','nachotop13','nachotop14','nachotop15'];
+  const topNombres = [
+    "Pico de gallo", "Maíz tierno", "Guacamole", "Lechuga en julianas",
+    "Sour cream", "Pimentones", "Queso doble crema", "Cebolla de la casa",
+    "Zanahoria de la casa", "Plátano maduro", "Jalapeños", "Frijoles",
+    "Pepinillos", "Hogao", "Brócoli"
+  ];
 
-  if (!prot || tops.length === 0) {
-    alert("❌ Selecciona al menos una proteína y toppings para los Nachos");
+  const protSeleccionadas = protIds.map((id, i) => {
+    const cant = parseInt(document.getElementById(id)?.textContent);
+    return cant > 0 ? `${protNombres[i]} x${cant}` : null;
+  }).filter(Boolean);
+
+  const topSeleccionados = topIds.map((id, i) => {
+    const cant = parseInt(document.getElementById(id)?.textContent);
+    return cant > 0 ? `${topNombres[i]} x${cant}` : null;
+  }).filter(Boolean);
+
+  if (protSeleccionadas.length === 0) {
+    alert("⚠️ Debes seleccionar al menos una proteína para tus nachos.");
     return;
   }
 
-  carrito.push({ nombre: `Nachos (Prot: ${prot}, Toppings: ${tops.join(", ")})`, precio: 17000, cantidad: 1 });
-} else if (opcion === "papaslocas") {
-  const prot = document.getElementById("proteinaPapas")?.value;
-  const checks = document.querySelectorAll("#contenedorToppingsPapas input[type='checkbox']:checked");
-  const tops = Array.from(checks).map(o => o.value);
+  let descripcion = "Nachos personalizados";
+  if (protSeleccionadas.length > 0) descripcion += `\nProteínas: ${protSeleccionadas.join(", ")}`;
+  if (topSeleccionados.length > 0) descripcion += `\nToppings: ${topSeleccionados.join(", ")}`;
 
-  if (!prot || tops.length === 0) {
+  carrito.push({ nombre: descripcion, precio: 17000, cantidad: 1 });
+
+  // Adicionales
+  const totalProte = protIds.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
+  if (totalProte > 1) carrito.push({ nombre: `Adicional proteínas (${totalProte - 1})`, precio: 6000 * (totalProte - 1), cantidad: 1 });
+
+  const totalTops = topIds.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
+  if (totalTops > 4) carrito.push({ nombre: `Adicional toppings (${totalTops - 4})`, precio: 2500 * (totalTops - 4), cantidad: 1 });
+
+
+ } else if (opcion === "papaslocas") {
+  // Proteínas de papas
+  const protIds = ['papasprot1','papasprot2','papasprot3','papasprot4','papasprot5','papasprot6','papasprot7','papasprot8','papasprot9','papasprot10'];
+  const protNombres = [
+    'Carne ropa vieja', 'Pollo a la plancha', 'Pechuga en ají de gallina', 'Carne en cubos',
+    'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo', 'Carne vegana', 'Pollo vegano', 'Rollitos primavera'
+  ];
+  const protSeleccionadas = protIds
+    .map((id, i) => {
+      const cant = parseInt(document.getElementById(id).textContent);
+      return cant > 0 ? `${protNombres[i]} x${cant}` : null;
+    })
+    .filter(Boolean);
+
+  const topIds = [
+    'papastop1','papastop2','papastop3','papastop4','papastop5','papastop6','papastop7','papastop8','papastop9','papastop10',
+    'papastop11','papastop12','papastop13','papastop14','papastop15'
+  ];
+  const topNombres = [
+    "Pico de gallo", "Maíz tierno", "Guacamole", "Lechuga en julianas",
+    "Sour cream", "Pimentones", "Queso doble crema", "Cebolla de la casa",
+    "Zanahoria de la casa", "Plátano maduro", "Jalapeños", "Frijoles",
+    "Pepinillos", "Hogao", "Brócoli"
+  ];
+  const topSeleccionados = topIds
+    .map((id, i) => {
+      const cant = parseInt(document.getElementById(id).textContent);
+      return cant > 0 ? `${topNombres[i]} x${cant}` : null;
+    })
+    .filter(Boolean);
+
+  if (protSeleccionadas.length === 0 || topSeleccionados.length === 0) {
     alert("❌ Selecciona al menos una proteína y toppings para las Papas Locas");
     return;
   }
 
-  carrito.push({ nombre: `Papas Locas (Prot: ${prot}, Toppings: ${tops.join(", ")})`, precio: 17000, cantidad: 1 });
+  carrito.push({ nombre: `Papas Locas`, precio: 17000, cantidad: 1 });
+  carrito.push({ nombre: `Proteínas: ${protSeleccionadas.join(", ")}`, precio: 0, cantidad: 1 });
+  carrito.push({ nombre: `Toppings: ${topSeleccionados.join(", ")}`, precio: 0, cantidad: 1 });
 }
-
-
-  if (document.getElementById("adicionPapas").value === "si") {
-    carrito.push({ nombre: "Papas artesanales", precio: 5000, cantidad: 1 });
-  }
-  if (document.getElementById("adicionEnsalada").value === "si") {
-    carrito.push({ nombre: "Ensalada insignia", precio: 7000, cantidad: 1 });
-  }
-  const postre = document.getElementById("adicionPostre").value;
-  if (postre) {
-    carrito.push({ nombre: `Postre: ${postre}`, precio: 7000, cantidad: 1 });
-  }
-  const bebida = document.getElementById("adicionBebida").value;
-  if (bebida) {
-    let precio = bebida.includes("250") ? 3000 : 3500;
-    carrito.push({ nombre: `Bebida: ${bebida}`, precio, cantidad: 1 });
-  }
-
   actualizarCarrito();
   document.getElementById("seccionPago").classList.remove("hidden");
 }
+
 
 
   function actualizarCarrito() {
@@ -503,6 +732,29 @@ function limitarSeleccionToppings(idContenedor, limite) {
 }
 limitarSeleccionToppings("contenedorToppingsNachos", 4);
 limitarSeleccionToppings("contenedorToppingsPapas", 3);
+function mostrarImagen(nombreArchivo) {
+  const img = document.getElementById("imgSeleccionada");
+  if (!nombreArchivo) {
+    img.classList.add("hidden");
+    img.src = "";
+    return;
+  }
+  img.src = `img/${nombreArchivo}`;
+  img.classList.remove("hidden");
+}
+function mostrarImagenSandwich() {
+  const valor = document.getElementById("tipoSandwich").value.toLowerCase();
+  const img = document.getElementById("imgSandwich");
+  if (!valor) {
+    img.classList.add("hidden");
+    img.src = "";
+  } else {
+    img.src = `img/${valor}.jpg`;
+    img.classList.remove("hidden");
+  }
+}
+
+
 
   // 🔗 INSERTA AQUÍ TU URL DE LA API DE GOOGLE SHEETS:
   const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw-r9bFqE4hexMgx17z_DypU2d-syurAq4fVRuTZUTFnbd60XSkjwywuJQ6DU12cljOJQ/exec";
@@ -563,6 +815,83 @@ function generarCheckboxToppings(tipo) {
       ${top}
     </label>`).join("");
 }
+function mostrarImagenSandwich() {
+  const valor = document.getElementById("tipoSandwich").value.toLowerCase();
+  mostrarImagen(`${valor}.jpg`);
+}
+// Mostrar imagen específica de postre sin afectar otras
+document.getElementById("adicionPostre").addEventListener("change", function () {
+  const valor = this.value;
+  const img = document.getElementById("imgPostreSeleccionado");
+
+  if (!valor) {
+    img.src = "";
+    img.classList.add("hidden");
+  } else {
+    let archivo = "";
+    if (valor === "Limón") archivo = "postrelimon.jpg";
+    else if (valor === "Maracuyá") archivo = "postremaracuya.jpg";
+    else if (valor === "Frutos rojos") archivo = "postrefrutosrojos.jpg";
+    else if (valor === "Limonada de coco") archivo = "postrecoco.jpg";
+
+    img.src = `img/${archivo}`;
+    img.classList.remove("hidden");
+  }
+});
+const enlacesWhatsapp = {
+  javeriana: "https://chat.whatsapp.com/KFd1wyeczfL4ABEko0qBtl",
+  andes: "https://chat.whatsapp.com/IYCOFzEm7XzDtkILQLrTdr",
+  externado: "https://chat.whatsapp.com/C8l5ERfLm9A0twrlAgufpU",
+  distrital: "https://chat.whatsapp.com/GVpwc0jjWSg8BbdCXioORz",
+  terpel: "https://chat.whatsapp.com/G870t4PQDU561ozvqHw7xt",
+  empresarial: "https://chat.whatsapp.com/HezhTOVaeUjAzFLApKw9Tn"
+};
+function generarControlesProteinas(prefix = "") {
+  const nombres = [
+    'Carne ropa vieja', 'Pollo a la plancha', 'Pechuga en ají de gallina',
+    'Carne en cubos', 'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo',
+    'Carne vegana', 'Pollo vegano', 'Rollitos primavera'
+  ];
+
+  return nombres.map((nombre, i) => `
+    <div class="flex justify-between items-center">
+      <span>${nombre}</span>
+      <div class="flex items-center gap-2">
+        <button onclick="cambiar('${prefix}${i+1}', -1)" class="px-2 bg-gray-200 rounded">−</button>
+        <span id="${prefix}${i+1}" class="min-w-[20px] text-center">0</span>
+        <button onclick="cambiar('${prefix}${i+1}', 1)" class="px-2 bg-gray-200 rounded">+</button>
+      </div>
+    </div>
+  `).join("");
+}
+function generarControlesToppings(prefix = "") {
+  const nombres = [
+    "Pico de gallo", "Maíz tierno", "Guacamole", "Lechuga en julianas",
+    "Sour cream", "Pimentones", "Queso doble crema", "Cebolla de la casa",
+    "Zanahoria de la casa", "Plátano maduro", "Jalapeños", "Frijoles",
+    "Pepinillos", "Hogao", "Brócoli"
+  ];
+
+  return nombres.map((nombre, i) => `
+    <div class="flex justify-between items-center">
+      <span>${nombre}</span>
+      <div class="flex items-center gap-2">
+        <button onclick="cambiar('${prefix}${i+1}', -1)" class="px-2 bg-gray-200 rounded">−</button>
+        <span id="${prefix}${i+1}" class="min-w-[20px] text-center">0</span>
+        <button onclick="cambiar('${prefix}${i+1}', 1)" class="px-2 bg-gray-200 rounded">+</button>
+      </div>
+    </div>
+  `).join("");
+}
+function mostrarContenido() {
+  document.getElementById("pantallaBienvenida").classList.add("hidden");
+  document.getElementById("contenidoPrincipal").classList.remove("hidden");
+}
+
+function entrarSitio() {
+      document.getElementById("pantallaBienvenida").style.display = "none";
+      document.body.classList.remove("overflow-hidden");
+    }
 
 </script>
 </body>
