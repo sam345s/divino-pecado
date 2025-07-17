@@ -62,9 +62,14 @@
     }
     
   .neon-vinotinto {
-    color: #8b0033; /* Vinotinto oscuro */
-    text-shadow: 0 0 5px #ff4d6d, 0 0 10px #ff4d6d, 0 0 20px #ff4d6d;
-  }
+  color: #89d1f6;
+  text-shadow:
+    0 0 4px #89d1f6,
+    0 0 8px #89d1f6,
+    0 0 16px #89d1f6,
+    0 0 32px #89d1f6;
+}
+
 
 
   </style>
@@ -74,24 +79,25 @@
 
 <body class="overflow-hidden">
 <body class="overflow-hidden">
-  <!-- Pantalla de cuenta regresiva -->
-  <div id="pantallaCuentaRegresiva" class="fixed inset-0 z-50 flex items-center justify-center bg-transparent">
-    <!-- Video de fondo -->
-    <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover z-0">
-      <source src="img/divino-vid.mp4" type="video/mp4">
-      Tu navegador no soporta video.
-    </video>
+<!-- Pantalla de cuenta regresiva -->
+<div id="pantallaCuentaRegresiva" class="fixed inset-0 z-50 flex items-center justify-center bg-transparent">
+  <!-- Video de fondo -->
+  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover z-0">
+    <source src="img/divino-vid.mp4" type="video/mp4">
+    Tu navegador no soporta video.
+  </video>
 
-    <!-- Contador -->
-    <div class="absolute top-10 left-1/2 transform -translate-x-1/2 z-10 text-6xl sm:text-7xl tracking-wider text-center scale-[1.9] neon-vinotinto" style="font-family: 'Playfair Display', serif;">
-      <div id="cuentaRegresiva"></div>
-    </div>
-
-    <!-- Frase -->
-    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 text-5xl sm:text-6xl text-center neon-vinotinto" style="font-family: 'Playfair Display', serif;">
-      ¡Falta poco para pecar juntos!
-    </div>
+  <!-- Contador -->
+  <div class="absolute top-4 sm:top-10 left-1/2 transform -translate-x-1/2 z-10 text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-wider text-center scale-100 sm:scale-[1.3] md:scale-[1.6] lg:scale-[1.9] neon-vinotinto" style="font-family: 'Playfair Display', serif;">
+    <div id="cuentaRegresiva"></div>
   </div>
+
+  <!-- Frase -->
+<div class="absolute bottom-4 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-10 text-xl sm:text-3xl md:text-5xl lg:text-6xl text-center whitespace-nowrap neon-vinotinto" style="font-family: 'Playfair Display', serif;">
+  ¡Falta poco para pecar juntos!
+</div>
+
+
 
   <!-- Pantalla de bienvenida (inicialmente oculta) -->
   <div id="pantallaBienvenida" class="fixed inset-0 hidden z-50 bg-[#89d1f6] flex flex-col items-center justify-center">
@@ -107,38 +113,47 @@
     <h1 class="text-3xl font-bold text-center">Bienvenido a Divino Pecado!</h1>
 
     <!-- Información personal -->
-    <label class="block">
-      <span class="text-gray-700">Nombre completo:</span>
-      <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
-    </label>
+    <!-- Nombre -->
+<label class="block">
+  <span class="text-gray-700">Nombre completo:</span>
+  <input id="nombre" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+</label>
+
+<!-- Teléfono -->
+<label class="block">
+  <span class="text-gray-700">Teléfono de contacto:</span>
+  <input id="telefono" type="tel" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+</label>
+
+
 <div class="flex justify-center mb-6">
   <img src="img/Menú.jpg" alt="Menú Divino Pecado" class="w-[85%] max-w-3xl rounded-lg shadow-lg" />
 </div>
 
-<label class="block mt-4">
-  <span class="text-gray-700">De qué universidad eres? O que opción te conviene más!(Para enviar el comprobante)</span>
-  <select id="universidadUsuario" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
+<label class="block">
+  <span class="text-gray-700">Universidad donde vas a recoger tu pedido:</span>
+  <select id="universidad" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
     <option value="">Selecciona tu universidad</option>
-    <option value="javeriana">Javeriana</option>
-    <option value="andes">Los Andes</option>
-    <option value="externado">Externado</option>
-    <option value="distrital">Distrital</option>
-    <option value="terpel">Terpel</option>
+    <option value="Javeriana">Edificio Arca, Javeriana</option>
+    <option value="Andes">Los Andes</option>
+    <option value="Externado">Externado</option>
+    <option value="Distrital">Edificio de ingenieria, U Distrital</option>
+    <option value="Terpel">Edificio principal Terpel Cra. 7ma</option>
     <option value="empresarial">Empresarial</option>
   </select>
 </label>
 
-    <label class="block">
-      <span class="text-gray-700">Universidad donde vas a recoger tu pedido:</span>
-      <select class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
-        <option value="">Selecciona tu universidad</option>
-        <option>Javeriana</option>
-        <option>Los Andes</option>
-        <option>Terpel</option>
-        <option>Distrital</option>
-        <option>Empresarial</option>
-      </select>
-    </label>
+ <!-- Hora -->
+<label class="block">
+  <span class="text-gray-700">¿A qué hora vas a recoger tu pedido?</span>
+  <select id="hora" class="mt-1 block w-full border border-gray-300 rounded-md p-2" required>
+    <option value="">Selecciona una hora</option>
+    <option value="12:00">12:00</option>
+    <option value="13:00">13:00</option>
+    <option value="14:00">14:00</option>
+  </select>
+</label>
+
 
     <label class="block">
       <span class="text-gray-700">¿Qué deseas pedir?</span>
@@ -939,10 +954,18 @@ function mostrarImagenSandwich() {
   const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw-r9bFqE4hexMgx17z_DypU2d-syurAq4fVRuTZUTFnbd60XSkjwywuJQ6DU12cljOJQ/exec";
 
 function confirmarPedidoFinal() {
-  const nombreInput = document.querySelector('input[type="text"]');
-  const universidadSelect = document.querySelector('select');
+  const nombreInput = document.getElementById("nombre");        // 👤 input de nombre
+  const telefonoInput = document.getElementById("telefono");    // ☎️ input de teléfono
+  const universidadSelect = document.getElementById("universidad"); // 🎓 select universidad
+  const horaSelect = document.getElementById("hora");           // ⏰ select de hora
 
-  if (!nombreInput.value.trim() || !universidadSelect.value) {
+  // Validación de campos
+  if (
+    !nombreInput.value.trim() ||
+    !telefonoInput.value.trim() ||
+    !universidadSelect.value ||
+    !horaSelect.value
+  ) {
     alert("❌ Faltan datos del cliente.");
     return;
   }
@@ -952,34 +975,37 @@ function confirmarPedidoFinal() {
     return;
   }
 
+  const fecha = new Date();
   const pedido = {
+    fecha: fecha.toLocaleDateString(), // Ej: 17/07/2025
     nombre: nombreInput.value.trim(),
+    telefono: telefonoInput.value.trim(),
+    hora: horaSelect.value,
     universidad: universidadSelect.value,
     items: carrito,
-    total: parseInt(document.getElementById("totalCarrito").textContent.replace("$", "").replace(".", "")),
-    fecha: new Date().toISOString()
+    total: parseInt(document.getElementById("totalCarrito").textContent.replace("$", "").replace(".", ""))
   };
 
   fetch(SHEETS_API_URL, {
-  method: "POST",
-  mode: "no-cors", // ← agrega esto
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(pedido)
-})
-
-  .then(() => {
-    alert("✅ Pedido enviado correctamente.");
-    carrito = [];
-    actualizarCarrito();
-    document.getElementById("seccionConfirmacion").classList.add("hidden");
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(pedido)
   })
-  .catch((error) => {
-    alert("❌ Error al enviar el pedido.");
-    console.error(error);
-  });
+    .then(() => {
+      alert("✅ Pedido enviado correctamente.");
+      carrito = [];
+      actualizarCarrito();
+      document.getElementById("seccionConfirmacion").classList.add("hidden");
+    })
+    .catch((error) => {
+      alert("❌ Error al enviar el pedido.");
+      console.error(error);
+    });
 }
+
 function generarCheckboxToppings(tipo) {
   const toppings = [
     "Pico de gallo", "Maíz tierno", "Guacamole", "Lechuga en julianas",
@@ -1109,40 +1135,42 @@ function productosIguales(a, b) {
 
   return true;
 }
+ const modoDev = false; // 👈 CAMBIA a false para ver el video con contador
 
+  if (modoDev) {
+    // Saltarse video y contador
+    document.getElementById("pantallaCuentaRegresiva").style.display = "none";
+    document.getElementById("pantallaBienvenida").classList.remove("hidden");
+    document.body.classList.remove("overflow-hidden");
+  } else {
+    const fechaObjetivo = new Date("2025-07-21T23:59:59").getTime();
 
-function mostrarContenido() {
-  document.getElementById("pantallaBienvenida").classList.add("hidden");
-  document.getElementById("contenidoPrincipal").classList.remove("hidden");
-}
+    const intervalo = setInterval(() => {
+      const ahora = new Date().getTime();
+      const diferencia = fechaObjetivo - ahora;
 
-function entrarSitio() {
-      document.getElementById("pantallaBienvenida").style.display = "none";
-      document.body.classList.remove("overflow-hidden");
-    }
-const fechaObjetivo = new Date("2025-07-21T23:59:59").getTime(); // cambia fecha si es necesario
+      if (diferencia <= 0) {
+        clearInterval(intervalo);
+        document.getElementById("pantallaCuentaRegresiva").style.display = "none";
+        document.getElementById("pantallaBienvenida").classList.remove("hidden");
+        document.body.classList.remove("overflow-hidden");
+        return;
+      }
 
-  const intervalo = setInterval(() => {
-    const ahora = new Date().getTime();
-    const diferencia = fechaObjetivo - ahora;
+      const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
 
-    if (diferencia <= 0) {
-  clearInterval(intervalo);
-  document.getElementById("pantallaCuentaRegresiva").style.display = "none";
-  document.getElementById("pantallaBienvenida").classList.remove("hidden");
-  document.body.classList.remove("overflow-hidden");
-  return;
-}
+      document.getElementById("cuentaRegresiva").innerText =
+        `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+    }, 1000);
+  }
 
-
-    const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-    const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-    const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
-
-    document.getElementById("cuentaRegresiva").innerHTML =
-      `${dias}d ${horas}h ${minutos}m ${segundos}s`;
-  }, 1000);
+  function mostrarContenido() {
+    document.getElementById("pantallaBienvenida").classList.add("hidden");
+    document.getElementById("contenidoPrincipal").classList.remove("hidden");
+  }
 </script>
 
 </body>
