@@ -186,7 +186,7 @@
       </label>
 
       <label class="block">
-        <span class="text-gray-700">¿Deseas ensalada insignia? ($7.000)</span>
+        <span class="text-gray-700">¿Deseas ensalada insignia? ($7.000) Contiene : Lechuga asiatica, tomate cherry , rabanos, zanahoria, queso paipa y vinagreta</span>
         <select id="adicionEnsalada" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
           <option value="no">No</option>
           <option value="si">Sí</option>
@@ -194,15 +194,19 @@
       </label>
 
       <label class="block">
-        <span class="text-gray-700">¿Deseas bebida?</span>
-        <select id="adicionBebida" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
-          <option value="">No gracias</option>
-          <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) </option>
-          <option value="Agua Cristal con gas (600 ml)">Agua Cristal con gas (600 ml) </option>
-          <option value="Gaseosa (600 ml)">Gaseosa (600 ml) </option>
-          <option value="Gaseosa (250 ml)">Gaseosa (250 ml) </option>
-        </select>
-      </label>
+  <span class="text-gray-700">¿Deseas bebida?</span>
+  <select id="adicionBebida" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+    <option value="">No gracias</option>
+    <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) - $3.500</option>
+    <option value="Agua Cristal con gas (600 ml)">Agua Cristal con gas (600 ml) - $3.500</option>
+    <option value="Coca-Cola original (400 ml)">Coca-Cola original (400 ml) - $4.500</option>
+    <option value="Coca-Cola zero (400 ml)">Coca-Cola zero (400 ml) - $4.000</option>
+    <option value="H2O (250 ml)">H2O (250 ml) - $3.000</option>
+    <option value="Agua Brisa (250 ml)">Agua Brisa (250 ml) - $3.000</option>
+    <option value="Pony Malta mini">Pony Malta mini - $3.000</option>
+  </select>
+</label>
+
 
       <label class="block">
         <span class="text-gray-700">¿Deseas postre? ($7.000)</span>
@@ -468,12 +472,15 @@ if (imgBowl) {
 <label class="block mt-6">
   <span class="text-gray-900 font-bold text-lg">Bebida (1 incluida):</span>
   <select id="bebidaBowl" class="mt-2 block w-full border border-gray-300 rounded-md p-2">
-    <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) - $3.500</option>
-    <option value="Agua Cristal con gas (600 ml)">Agua Cristal con gas (600 ml) - $3.500</option>
-    <option value="Gaseosa (600 ml)">Gaseosa (600 ml) - $3.500</option>
-    <option value="Gaseosa (250 ml)">Gaseosa (250 ml) - $3.000</option>
+    <option value="Agua Cristal (250 ml)">Agua Cristal (250 ml)</option>
+    <option value="Agua Cristal con gas (250 ml)">Agua Cristal con gas (250 ml)</option>
+    <option value="H2O (250 ml)">H2O (250 ml)</option>
+    <option value="Agua Brisa (250 ml)">Agua Brisa (250 ml)</option>
+    <option value="Pony Malta mini">Pony Malta mini</option>
+    <option value="Gaseosa Postobón Cero">Gaseosa Postobón Cero</option>
   </select>
 </label>
+
 
   </div>`;
       }
@@ -826,7 +833,9 @@ if (bebida) {
   let precioBebida = 0;
 
   if (bebida.includes("600 ml")) precioBebida = 3500;
-  else if (bebida.includes("250 ml")) precioBebida = 3000;
+  else if (bebida.includes("Coca-Cola original")) precioBebida = 4500;
+  else if (bebida.includes("Coca-Cola zero")) precioBebida = 4000;
+  else if (bebida.includes("250 ml") || bebida.includes("Pony Malta")) precioBebida = 3000;
 
   // Verificar si ya existe una bebida igual en el carrito
   const bebidaExistente = carrito.find(
@@ -836,30 +845,40 @@ if (bebida) {
   if (!bebidaExistente) {
     carrito.push({
       nombre: `Bebida: ${bebida}`,
-      precio: precioBebida,
-      cantidad: 1
+      cantidad: 1,
+      precio: precioBebida
     });
   }
 }
+
 // Papas Artesanales
 const adicionPapas = document.getElementById("adicionPapas").value;
 if (adicionPapas === "si") {
-  carrito.push({
-    nombre: "Papas Artesanales",
-    precio: 5000,
-    cantidad: 1
-  });
+  const papasExistentes = carrito.find(item => item.nombre === "Papas Artesanales");
+
+  if (!papasExistentes) {
+    carrito.push({
+      nombre: "Papas Artesanales",
+      precio: 5000,
+      cantidad: 1
+    });
+  }
 }
 
 // Ensalada Insignia
 const adicionEnsalada = document.getElementById("adicionEnsalada").value;
 if (adicionEnsalada === "si") {
-  carrito.push({
-    nombre: "Ensalada Insignia",
-    precio: 7000,
-    cantidad: 1
-  });
+  const ensaladaExistente = carrito.find(item => item.nombre === "Ensalada Insignia");
+
+  if (!ensaladaExistente) {
+    carrito.push({
+      nombre: "Ensalada Insignia",
+      precio: 7000,
+      cantidad: 1
+    });
+  }
 }
+
 
   actualizarCarrito();
 document.getElementById("seccionPago").classList.remove("hidden");
@@ -953,12 +972,11 @@ function mostrarImagenSandwich() {
   const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw-r9bFqE4hexMgx17z_DypU2d-syurAq4fVRuTZUTFnbd60XSkjwywuJQ6DU12cljOJQ/exec";
 
 function confirmarPedidoFinal() {
-  const nombreInput = document.getElementById("nombre");        // 👤 input de nombre
-  const telefonoInput = document.getElementById("telefono");    // ☎️ input de teléfono
-  const universidadSelect = document.getElementById("universidad"); // 🎓 select universidad
-  const horaSelect = document.getElementById("hora");           // ⏰ select de hora
+  const nombreInput = document.getElementById("nombre");
+  const telefonoInput = document.getElementById("telefono");
+  const universidadSelect = document.getElementById("universidad");
+  const horaSelect = document.getElementById("hora");
 
-  // Validación de campos
   if (
     !nombreInput.value.trim() ||
     !telefonoInput.value.trim() ||
@@ -976,7 +994,7 @@ function confirmarPedidoFinal() {
 
   const fecha = new Date();
   const pedido = {
-    fecha: fecha.toLocaleDateString(), // Ej: 17/07/2025
+    fecha: fecha.toLocaleDateString(),
     nombre: nombreInput.value.trim(),
     telefono: telefonoInput.value.trim(),
     hora: horaSelect.value,
@@ -995,8 +1013,18 @@ function confirmarPedidoFinal() {
   })
     .then(() => {
       alert("✅ Pedido enviado correctamente.");
+
+      // 🧼 Limpiar inputs
+      nombreInput.value = "";
+      telefonoInput.value = "";
+      universidadSelect.value = "";
+      horaSelect.value = "";
+
+      // 🛒 Limpiar carrito
       carrito = [];
       actualizarCarrito();
+
+      // ❌ Ocultar confirmación
       document.getElementById("seccionConfirmacion").classList.add("hidden");
     })
     .catch((error) => {
@@ -1004,6 +1032,7 @@ function confirmarPedidoFinal() {
       console.error(error);
     });
 }
+
 
 function generarCheckboxToppings(tipo) {
   const toppings = [
