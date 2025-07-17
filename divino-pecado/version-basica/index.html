@@ -78,37 +78,33 @@
 
 
 <body class="overflow-hidden">
-<body class="overflow-hidden">
-<!-- Pantalla de cuenta regresiva -->
-<div id="pantallaCuentaRegresiva" class="fixed inset-0 z-50 flex items-center justify-center bg-transparent">
-  <!-- Video de fondo -->
-  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover z-0">
-    <source src="img/divino-vid.mp4" type="video/mp4">
-    Tu navegador no soporta video.
-  </video>
+  <!-- Pantalla de cuenta regresiva -->
+  <div id="pantallaCuentaRegresiva" class="fixed inset-0 z-50 flex items-center justify-center bg-transparent">
+    <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover z-0">
+      <source src="img/divino-vid.mp4" type="video/mp4">
+      Tu navegador no soporta video.
+    </video>
 
-  <!-- Contador -->
-  <div class="absolute top-4 sm:top-10 left-1/2 transform -translate-x-1/2 z-10 text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-wider text-center scale-100 sm:scale-[1.3] md:scale-[1.6] lg:scale-[1.9] neon-vinotinto" style="font-family: 'Playfair Display', serif;">
-    <div id="cuentaRegresiva"></div>
+    <div class="absolute top-4 sm:top-10 left-1/2 transform -translate-x-1/2 z-10 text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-center scale-100 sm:scale-[1.3] md:scale-[1.6] lg:scale-[1.9] neon-vinotinto" style="font-family: 'Playfair Display', serif;">
+      <div id="cuentaRegresiva"></div>
+    </div>
+
+    <div class="absolute bottom-4 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-10 text-xl sm:text-3xl md:text-5xl lg:text-6xl text-center whitespace-nowrap neon-vinotinto" style="font-family: 'Playfair Display', serif;">
+      ¡Falta poco para pecar juntos!
+    </div>
   </div>
 
-  <!-- Frase -->
-<div class="absolute bottom-4 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-10 text-xl sm:text-3xl md:text-5xl lg:text-6xl text-center whitespace-nowrap neon-vinotinto" style="font-family: 'Playfair Display', serif;">
-  ¡Falta poco para pecar juntos!
-</div>
-
-
-
-  <!-- Pantalla de bienvenida (inicialmente oculta) -->
-  <div id="pantallaBienvenida" class="fixed inset-0 hidden z-50 bg-[#89d1f6] flex flex-col items-center justify-center">
+  <!-- Pantalla de bienvenida -->
+  <div id="pantallaBienvenida" class="hidden fixed inset-0 z-50 bg-[#89d1f6] flex flex-col items-center justify-center">
     <img src="img/logo-divino.png" alt="Logo Divino Pecado" class="w-80 mb-10">
     <button onclick="mostrarContenido()" class="bg-[#89d1f6] text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-[#68b8e0] transition">
       Entrar
     </button>
   </div>
 
-  <!-- Contenido principal (oculto inicialmente) -->
+  <!-- Contenido principal -->
   <div id="contenidoPrincipal" class="hidden">
+    <!-- Tu contenido aquí -->
   <div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md space-y-6">
     <h1 class="text-3xl font-bold text-center">Bienvenido a Divino Pecado!</h1>
 
@@ -1135,13 +1131,17 @@ function productosIguales(a, b) {
 
   return true;
 }
- const modoDev = true; // 👈 CAMBIA a false para ver el video con contador
+ document.addEventListener("DOMContentLoaded", () => {
+  const modoDev = true; // ← CAMBIA a true para producción
+
+  const cuentaRegresiva = document.getElementById("pantallaCuentaRegresiva");
+  const bienvenida = document.getElementById("pantallaBienvenida");
+  const cuerpo = document.body;
 
   if (modoDev) {
-    // Saltarse video y contador
-    document.getElementById("pantallaCuentaRegresiva").style.display = "none";
-    document.getElementById("pantallaBienvenida").classList.remove("hidden");
-    document.body.classList.remove("overflow-hidden");
+    cuentaRegresiva.classList.add("hidden");
+    bienvenida.classList.remove("hidden");
+    cuerpo.classList.remove("overflow-hidden");
   } else {
     const fechaObjetivo = new Date("2025-07-21T23:59:59").getTime();
 
@@ -1151,9 +1151,9 @@ function productosIguales(a, b) {
 
       if (diferencia <= 0) {
         clearInterval(intervalo);
-        document.getElementById("pantallaCuentaRegresiva").style.display = "none";
-        document.getElementById("pantallaBienvenida").classList.remove("hidden");
-        document.body.classList.remove("overflow-hidden");
+        cuentaRegresiva.classList.add("hidden");
+        bienvenida.classList.remove("hidden");
+        cuerpo.classList.remove("overflow-hidden");
         return;
       }
 
@@ -1167,10 +1167,13 @@ function productosIguales(a, b) {
     }, 1000);
   }
 
-  function mostrarContenido() {
-    document.getElementById("pantallaBienvenida").classList.add("hidden");
+  // Mostrar contenido principal al presionar "Entrar"
+  window.mostrarContenido = function () {
+    bienvenida.classList.add("hidden");
     document.getElementById("contenidoPrincipal").classList.remove("hidden");
-  }
+    cuerpo.classList.remove("overflow-hidden");
+  };
+});
 </script>
 
 </body>
