@@ -194,7 +194,7 @@
       </label>
 
       <label class="block">
-  <span class="text-gray-700">¿Deseas bebida?</span>
+  <span class="text-gray-700">¿Deseas adicionar una bebida??</span>
   <select id="adicionBebida" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
     <option value="">No gracias</option>
     <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) - $3.500</option>
@@ -358,9 +358,20 @@ if (imgSandwich) {
         </div>
       </label>
 
+      <!-- Tipo de papas locas -->
+      <label class="block">
+        <span class="text-gray-700 font-bold text-lg">¿Qué tipo de papas locas prefieres?</span>
+        <select id="tipoPapasLocas" class="mt-2 block w-full border border-gray-300 rounded-md p-2">
+          <option value="">Selecciona una opción</option>
+          <option value="Chips">Chips</option>
+          <option value="Criollas">Criollas</option>
+        </select>
+      </label>
+
     </div>
   `;
 }}
+
 
 
 
@@ -600,11 +611,11 @@ if (!carrito.some(item => productosIguales(item, productoSemana))) {
 // ✅ Bowl personalizado
 // Recolectar cantidades
 const basesIds = ['base1', 'base2', 'base3', 'base4'];
-const basesNombres = ['Arroz', 'Arroz integral', 'Macarrones', 'Lechuga'];
+const basesNombres = ['Arroz', 'Arroz integral', 'Pasta corta', 'Lechuga'];
 const protIds = ['prot1','prot2','prot3','prot4','prot5','prot6','prot7','prot8','prot9','prot10'];
 const protNombres = [
-  'Carne ropa vieja', 'Pollo a la plancha', 'Pechuga en ají de gallina', 'Carne en cubos',
-  'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo', 'Carne vegana', 'Pollo vegano', 'Rollitos primavera'
+  'Carne ropa vieja', 'Pollo a la plancha en cubos', 'Pechuga en ají de gallina', 'Carne a la plancha en cubos',
+  'Albóndigas', 'Cerdo a la plancha BBQ en cubos', 'Tartar de pollo', 'Carne vegana (base de lentejas)', 'Pollo vegano (base de garbanzo)', 'Rollitos primavera'
 ];
 const topIds = [
   'top1','top2','top3','top4','top5','top6','top7','top8','top9','top10',
@@ -771,6 +782,11 @@ if (totalTops > 4) {
     return;
   }
 
+  const tipoPapas = document.getElementById("tipoPapasLocas")?.value;
+  if (!tipoPapas) {
+    alert("❌ Por favor, selecciona el tipo de papas locas (Chips o Criollas).");
+    return;
+  }
 
   const proteinaPapas = document.querySelector('input[name="proteina-papas"]:checked');
   const proteinaSeleccionadaPapas = proteinaPapas ? proteinaPapas.value : "";
@@ -783,31 +799,28 @@ if (totalTops > 4) {
     }
   });
 
-let descripcion = "Papas Locas";
-if (protSeleccionadas.length > 0) {
-  descripcion += `\nProteínas: ${protSeleccionadas.join(", ")}`;
-}
-if (topSeleccionados.length > 0) {
-  descripcion += `\nToppings: ${topSeleccionados.join(", ")}`;
-}
+  let descripcion = `Papas Locas (${tipoPapas})`;
+  if (protSeleccionadas.length > 0) {
+    descripcion += `\nProteínas: ${protSeleccionadas.join(", ")}`;
+  }
+  if (topSeleccionados.length > 0) {
+    descripcion += `\nToppings: ${topSeleccionados.join(", ")}`;
+  }
 
- const papaslocas = {
-  nombre: descripcion,
-  proteina: proteinaSeleccionadaPapas || "sin proteína",
-  toppings: [...toppingsSeleccionadosPapas],
-  descripcion: descripcion,
-  precio: 17000,
-  cantidad: 1,
-  tipo: "papaslocas"
-};
+  const papaslocas = {
+    nombre: descripcion,
+    proteina: proteinaSeleccionadaPapas || "sin proteína",
+    toppings: [...toppingsSeleccionadosPapas],
+    descripcion: descripcion,
+    precio: 17000,
+    cantidad: 1,
+    tipo: "papaslocas"
+  };
 
-
- const existente = carrito.find(item => productosIguales(item, papaslocas));
-if (!existente) {
-  carrito.push(papaslocas);
-
-
-
+  const existente = carrito.find(item => productosIguales(item, papaslocas));
+  if (!existente) {
+    carrito.push(papaslocas);
+  
 
   actualizarCarrito();
 }
