@@ -194,18 +194,25 @@
       </label>
 
       <label class="block">
-  <span class="text-gray-700">¿Deseas adicionar una bebida??</span>
+  <span class="text-gray-700">¿Deseas adicionar una bebida?</span>
   <select id="adicionBebida" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
     <option value="">No gracias</option>
     <option value="Agua Cristal (600 ml)">Agua Cristal (600 ml) - $3.500</option>
     <option value="Agua Cristal con gas (600 ml)">Agua Cristal con gas (600 ml) - $3.500</option>
-    <option value="Coca-Cola original (400 ml)">Coca-Cola original (400 ml) - $4.500</option>
-    <option value="Coca-Cola zero (400 ml)">Coca-Cola zero (400 ml) - $4.000</option>
+    <option value="Coca-Cola original (500 ml)">Coca-Cola original (500 ml) - $5.000</option>
+    <option value="Coca-Cola zero (500 ml)">Coca-Cola zero (500 ml) - $4.500</option>
     <option value="H2O (250 ml)">H2O (250 ml) - $3.000</option>
     <option value="Agua Brisa (250 ml)">Agua Brisa (250 ml) - $3.000</option>
     <option value="Pony Malta mini">Pony Malta mini - $3.000</option>
+
+    <!-- Jugos Hit de 500 ml -->
+    <option value="Jugo Hit Lulo (500 ml)">Jugo Hit Lulo (500 ml) - $4.000</option>
+    <option value="Jugo Hit Mango (500 ml)">Jugo Hit Mango (500 ml) - $4.000</option>
+    <option value="Jugo Hit Mora (500 ml)">Jugo Hit Mora (500 ml) - $4.000</option>
+    <option value="Jugo Hit Tropical (500 ml)">Jugo Hit Tropical (500 ml) - $4.000</option>
   </select>
 </label>
+
 
 
       <label class="block">
@@ -497,9 +504,21 @@ if (tipo === "semana") {
     <option value="H2O (250 ml)">H2O (250 ml)</option>
     <option value="Agua Brisa (250 ml)">Agua Brisa (250 ml)</option>
     <option value="Pony Malta mini">Pony Malta mini</option>
-    <option value="Gaseosa Postobón Cero">Gaseosa Postobón Cero</option>
+
+    <!-- Nuevas Gaseosas -->
+    <option value="Colombiana (250 ml)">Colombiana (250 ml)</option>
+    <option value="Manzana Postobón (250 ml)">Manzana Postobón (250 ml)</option>
+    <option value="Uva Postobón (250 ml)">Uva Postobón (250 ml)</option>
+    <option value="Naranja Postobón (250 ml)">Naranja Postobón (250 ml)</option>
+
+    <!-- Jugos Hit de cajita -->
+    <option value="Jugo Hit de cajita Lulo (200 ml)">Jugo Hit de cajita Lulo (200 ml)</option>
+    <option value="Jugo Hit de cajita Mango (200 ml)">Jugo Hit de cajita Mango (200 ml)</option>
+    <option value="Jugo Hit de cajita Mora (200 ml)">Jugo Hit de cajita Mora (200 ml)</option>
+    <option value="Jugo Hit de cajita Tropical (200 ml)">Jugo Hit de cajita Tropical (200 ml)</option>
   </select>
 </label>
+
 
 
   </div>`;
@@ -855,8 +874,8 @@ if (bebida) {
   let precioBebida = 0;
 
   if (bebida.includes("600 ml")) precioBebida = 3500;
-  else if (bebida.includes("Coca-Cola original")) precioBebida = 4500;
-  else if (bebida.includes("Coca-Cola zero")) precioBebida = 4000;
+  else if (bebida.includes("Coca-Cola original")) precioBebida = 5000;
+  else if (bebida.includes("Coca-Cola zero")) precioBebida = 4500;
   else if (bebida.includes("250 ml") || bebida.includes("Pony Malta")) precioBebida = 3000;
 
   // Verificar si ya existe una bebida igual en el carrito
