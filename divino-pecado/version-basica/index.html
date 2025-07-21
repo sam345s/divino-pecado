@@ -877,7 +877,7 @@ if (bebida) {
   else if (bebida.includes("Coca-Cola original")) precioBebida = 5000;
   else if (bebida.includes("Coca-Cola zero")) precioBebida = 4500;
   else if (bebida.includes("250 ml") || bebida.includes("Pony Malta")) precioBebida = 3000;
-
+  else if (bebida.includes("500 ml")) precioBebida = 4000;
   // Verificar si ya existe una bebida igual en el carrito
   const bebidaExistente = carrito.find(
     item => item.nombre === `Bebida: ${bebida}`
