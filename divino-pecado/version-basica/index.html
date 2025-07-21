@@ -386,21 +386,28 @@ if (imgBowl) {
     const contenedor = document.getElementById("bowlOpciones");
     contenedor.innerHTML = "";
 
-    if (tipo === "semana") {
+if (tipo === "semana") {
   contenedor.innerHTML = `
     <label class="block">
-      <span class="text-gray-700">Elige opción de la semana:</span>
+      <span class="text-gray-700">Opción de la semana:</span>
       <select class="mt-1 block w-full border border-gray-300 rounded-md p-2">
-        <option>Criollo</option>
-        <option>Italiano</option>
+        <option>Paisa</option>
       </select>
     </label>`;
 
   const selectBowlSemana = contenedor.querySelector("select");
+
+  // Mostrar imagen directamente ya que solo hay una opción
+  mostrarImagen("BOWL-PAISA.jpg");
+
+  // (Opcional) Si más adelante vuelves a poner más opciones, se puede mantener este eventListener:
   selectBowlSemana.addEventListener("change", () => {
     const seleccion = selectBowlSemana.value.toLowerCase();
-    mostrarImagen(`${seleccion}.jpg`);
+    if (seleccion === "paisa") {
+      mostrarImagen("BOWL-PAISA.jpg");
+    }
   });
+
     } else if (tipo === "armar") {
       contenedor.innerHTML = `
   <div class="space-y-6">
