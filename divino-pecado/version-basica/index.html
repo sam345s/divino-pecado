@@ -252,7 +252,6 @@
 <div id="seccionConfirmacion" class="hidden text-center mt-6 space-y-6 max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg border">
   <p class="text-green-600 text-xl font-semibold">
     ✅ ¡Tu pedido fue enviado correctamente!<br>
-    Por favor recuerda después de enviar el comprobante al grupo darle click al botón de confirmar pedido final!!!  
   </p>
 
   <div>
@@ -270,13 +269,13 @@
 <!-- Resumen final del pedido (para Google Sheets) -->
 <div id="resumenPedidoFinal" class="p-4 text-white text-sm"></div>
 
-  <!-- ✅ Botón que envía a Google Sheets -->
+  <!-- ✅ Botón que envía a Google Sheets 
 <div class="mt-4">
   <button onclick="confirmarPedidoFinal()" class="bg-green-600 text-white px-4 py-2 rounded">
     Confirmar Pedido Final
   </button>
 </div>
-
+-->
 
 
   <script>
@@ -580,26 +579,25 @@ if (tipo === "semana") {
   const seccionPago = document.getElementById("seccionPago");
   const btnWhatsapp = document.getElementById("btnWhatsapp");
 
-  // Mostrar sección QR y WhatsApp (sin ocultar el carrito ni otras cosas)
-  seccionConfirmacion.classList.remove("hidden");
+// Mostrar sección QR y WhatsApp (sin ocultar el carrito ni otras cosas)
+seccionConfirmacion.classList.remove("hidden");
 
-  // Asignar enlace al botón de WhatsApp
-  if (link) {
-    btnWhatsapp.href = link;
-    btnWhatsapp.textContent = "Ir al grupo de WhatsApp";
-  } else {
-    btnWhatsapp.href = "#";
-    btnWhatsapp.textContent = "Grupo no disponible";
-  }
-
-  // Mostrar botón final de confirmación dentro de la sección de confirmación
-  seccionPago.classList.remove("hidden");
-  seccionPago.innerHTML = `
-    <button onclick="confirmarPedidoFinal()" class="bg-green-600 text-white px-4 py-2 rounded mt-4">
-      Confirmar Pedido Final
-    </button>
-  `;
+// Asignar enlace al botón de WhatsApp
+if (link) {
+  btnWhatsapp.href = link;
+  btnWhatsapp.textContent = "Ir al grupo de WhatsApp";
+} else {
+  btnWhatsapp.href = "#";
+  btnWhatsapp.textContent = "Grupo no disponible";
 }
+
+// Enviar pedido al hacer clic en el botón de WhatsApp
+btnWhatsapp.addEventListener("click", () => {
+  confirmarPedidoFinal();
+});
+}
+// (Eliminado el bloque del botón verde)
+
 
 
   let carrito = [];
@@ -751,7 +749,7 @@ if (!carrito.some(item => productosIguales(item, sandwich))) {
   if (protSeleccionadas.length > 0) descripcion += `\nProteínas: ${protSeleccionadas.join(", ")}`;
   if (topSeleccionados.length > 0) descripcion += `\nToppings: ${topSeleccionados.join(", ")}`;
 
-const nachos = { nombre: descripcion, precio: 17000, cantidad: 1, tipo: "nachos" };
+const nachos = { nombre: descripcion, precio: 17500, cantidad: 1, tipo: "nachos" };
 const existente = carrito.find(item => productosIguales(item, nachos));
 if (!existente) {
   carrito.push(nachos);
@@ -838,7 +836,7 @@ if (totalTops > 4) {
     proteina: proteinaSeleccionadaPapas || "sin proteína",
     toppings: [...toppingsSeleccionadosPapas],
     descripcion: descripcion,
-    precio: 17000,
+    precio: 17500,
     cantidad: 1,
     tipo: "papaslocas"
   };
