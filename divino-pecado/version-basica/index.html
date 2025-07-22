@@ -1317,33 +1317,33 @@ function productosIguales(a, b) {
     cuerpo.classList.remove("overflow-hidden");
   };
 });
-  async function validarHorarioDesdeAPI() {
-    try {
-      const response = await fetch("https://worldtimeapi.org/api/timezone/America/Bogota");
-      const data = await response.json();
+function validarHorarioCliente() {
+  const ahora = new Date();
+  const hora = ahora.getHours();
+  const minutos = ahora.getMinutes();
 
-      const dateTime = new Date(data.datetime);
-      const hora = dateTime.getHours(); // Hora en Bogotá
+  const btnEntrar = document.querySelector("#pantallaBienvenida button");
 
-      const btnEntrar = document.querySelector("#pantallaBienvenida button");
-      const mensaje = document.getElementById("mensajeHorario");
+  // Convertimos la hora actual a minutos desde medianoche
+  const minutosActuales = hora * 60 + minutos;
 
-      if (hora >= 10) {
-        btnEntrar.disabled = true;
-        btnEntrar.classList.add("bg-gray-400", "cursor-not-allowed");
-        btnEntrar.classList.remove("hover:bg-[#68b8e0]");
-        mensaje.textContent = "🚫 Los pedidos solo se reciben hasta las 10:00 AM (hora Colombia)";
-        mensaje.classList.remove("hidden");
-      } else {
-        btnEntrar.disabled = false;
-        mensaje.classList.add("hidden");
-      }
-    } catch (error) {
-      console.error("Error al obtener la hora de Bogotá:", error);
-    }
+  // Rango válido: desde las 3:00 AM (180 min) hasta las 9:59 AM (599 min)
+  const estaDentroDelHorario = minutosActuales >= 180 && minutosActuales <= 599;
+
+  if (!estaDentroDelHorario) {
+    btnEntrar.disabled = true;
+    btnEntrar.textContent = "⏰ Los pedidos son hasta las 10:00 AM";
+    btnEntrar.classList.remove("bg-[#89d1f6]", "hover:bg-[#68b8e0]");
+    btnEntrar.classList.add("bg-gray-400", "cursor-not-allowed", "text-white");
+
+    btnEntrar.onclick = () => {
+      alert("❌ Los pedidos solo se pueden hacer entre las 3:00 AM y las 10:00 AM.");
+    };
   }
+}
 
-  validarHorarioDesdeAPI();
+document.addEventListener("DOMContentLoaded", validarHorarioCliente);
+
 </script>
 
 </body>
