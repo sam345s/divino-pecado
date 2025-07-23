@@ -107,7 +107,7 @@
   <!-- Mensaje debajo -->
   <p id="mensajeHorario"
     class="bg-[#68b8e0] px-6 py-3 rounded-xl text-white text-base sm:text-lg font-semibold w-[48%]">
-    ⚠️ Los pedidos se toman únicamente hasta las <strong>10:00 AM</strong>
+    ⚠️ Los pedidos se toman únicamente hasta las <strong>11:00 AM</strong>
   </p>
 </div>
 
@@ -1337,17 +1337,17 @@ function validarHorarioCliente() {
   // Convertimos la hora actual a minutos desde medianoche
   const minutosActuales = hora * 60 + minutos;
 
-  // Rango válido: desde las 3:00 AM (180 min) hasta las 9:59 AM (599 min)
-  const estaDentroDelHorario = minutosActuales >= 180 && minutosActuales <= 599;
+  // Nuevo rango válido: desde 3:00 AM (180 min) hasta 10:59 AM (659 min)
+  const estaDentroDelHorario = minutosActuales >= 180 && minutosActuales <= 659;
 
   if (!estaDentroDelHorario) {
     btnEntrar.disabled = true;
-    btnEntrar.textContent = "⏰ Los pedidos son hasta las 10:00 AM";
+    btnEntrar.textContent = "⏰ Los pedidos son hasta las 11:00 AM";
     btnEntrar.classList.remove("bg-[#89d1f6]", "hover:bg-[#68b8e0]");
     btnEntrar.classList.add("bg-gray-400", "cursor-not-allowed", "text-white");
 
     btnEntrar.onclick = () => {
-      alert("❌ Los pedidos solo se pueden hacer entre las 3:00 AM y las 10:00 AM.");
+      alert("❌ Los pedidos solo se pueden hacer entre las 3:00 AM y las 11:00 AM.");
     };
   }
 }
