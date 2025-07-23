@@ -94,13 +94,19 @@
     </div>
   </div>
 
-  <!-- Pantalla de bienvenida -->
-  <div id="pantallaBienvenida" class="hidden fixed inset-0 z-50 bg-[#89d1f6] flex flex-col items-center justify-center">
-    <img src="img/logo-divino.png" alt="Logo Divino Pecado" class="w-80 mb-10">
-    <button onclick="mostrarContenido()" class="bg-[#89d1f6] text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-[#68b8e0] transition">
-      Entrar
-    </button>
-  </div>
+<!-- Pantalla de bienvenida -->
+<div id="pantallaBienvenida" class="hidden fixed inset-0 z-50 bg-[#89d1f6] flex flex-col items-center justify-center">
+  <img src="img/logo-divino.png" alt="Logo Divino Pecado" class="w-80 mb-10">
+
+  <button onclick="mostrarContenido()" class="bg-[#89d1f6] text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-[#68b8e0] transition">
+    Entrar
+  </button>
+
+  <p id="mensajeHorario" class="hidden mt-4 text-white text-lg font-semibold text-center px-4">
+    <!-- Aquí aparecerá el mensaje si es después de las 10 AM -->
+  </p>
+</div>
+
 
   <!-- Contenido principal -->
   <div id="contenidoPrincipal" class="hidden">
@@ -255,12 +261,17 @@
   </p>
 
   <div>
-    <p class="text-gray-700 text-base mb-2">1️⃣ Escanea este código QR para pagar por Nequi:
-      (Si no te funciona puedes hacerlo al siguiente número!! +57 3208377248)
+    <p class="text-gray-700 text-base mb-2">
+      1️⃣ Escanea este código QR para pagar por Nequi:
     </p>
+
+    <p class="text-lg text-gray-800">
+      (Si no te funciona puedes hacerlo al siguiente número!)<br>
+      <span class="text-2xl font-bold text-black">+57 320 837 7248</span>
+    </p>
+
     <img src="img/qr-nequi.png" alt="QR Nequi" class="mx-auto w-64 h-auto rounded-lg shadow-md border" />
   </div>
-
   <p class="text-gray-700 text-base">2️⃣ Luego, envía el comprobante al grupo de WhatsApp según tu universidad:</p>
 
   <a id="btnWhatsapp" href="#" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow transition">
@@ -540,6 +551,34 @@ if (tipo === "semana") {
     const total = proteinas.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
     return total > 0;
   }
+function validarToppingsBowl() {
+  const topIds = [
+    'top1','top2','top3','top4','top5','top6','top7','top8','top9','top10',
+    'top11','top12','top13','top14','top15'
+  ];
+  const totalToppings = topIds.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
+  return totalToppings >= 5;
+}
+function validarToppingsNachos() {
+  const topIds = [
+    'nachotop1','nachotop2','nachotop3','nachotop4','nachotop5',
+    'nachotop6','nachotop7','nachotop8','nachotop9','nachotop10',
+    'nachotop11','nachotop12','nachotop13','nachotop14','nachotop15'
+  ];
+  const total = topIds.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent || 0), 0);
+  return total >= 3;
+}
+
+function validarToppingsPapas() {
+  const topIds = [
+    'papastop1','papastop2','papastop3','papastop4','papastop5',
+    'papastop6','papastop7','papastop8','papastop9','papastop10',
+    'papastop11','papastop12','papastop13','papastop14','papastop15'
+  ];
+  const total = topIds.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent || 0), 0);
+  return total >= 3;
+}
+
 
   function agregarAdicionalesContadores() {
     const adicionales = [];
@@ -576,27 +615,45 @@ if (tipo === "semana") {
   const link = enlacesWhatsapp[universidad];
 
   const seccionConfirmacion = document.getElementById("seccionConfirmacion");
-  const seccionPago = document.getElementById("seccionPago");
   const btnWhatsapp = document.getElementById("btnWhatsapp");
 
-// Mostrar sección QR y WhatsApp (sin ocultar el carrito ni otras cosas)
-seccionConfirmacion.classList.remove("hidden");
+  seccionConfirmacion.classList.remove("hidden");
 
-// Asignar enlace al botón de WhatsApp
-if (link) {
-  btnWhatsapp.href = link;
-  btnWhatsapp.textContent = "Ir al grupo de WhatsApp";
-} else {
-  btnWhatsapp.href = "#";
-  btnWhatsapp.textContent = "Grupo no disponible";
+  // Actualizar botón visualmente
+  btnWhatsapp.textContent = link ? "Ir al grupo de WhatsApp" : "Grupo no disponible";
+  btnWhatsapp.href = "#"; // Nunca lo redireccionamos directamente, controlamos manualmente
+
+  btnWhatsapp.onclick = (e) => {
+    e.preventDefault();
+
+    const nombreInput = document.getElementById("nombre");
+    const telefonoInput = document.getElementById("telefono");
+    const universidadSelect = document.getElementById("universidad");
+    const horaSelect = document.getElementById("hora");
+
+    const datosIncompletos =
+      !nombreInput.value.trim() ||
+      !telefonoInput.value.trim() ||
+      !universidadSelect.value ||
+      !horaSelect.value;
+
+    if (datosIncompletos) {
+      alert("❌ Por favor completa todos los datos del cliente antes de continuar.");
+      return;
+    }
+
+    if (!link) {
+      alert("❌ No hay grupo disponible para la universidad seleccionada.");
+      return;
+    }
+
+    // Si todo está bien, enviamos el pedido y redireccionamos
+    confirmarPedidoFinal();
+    window.open(link, "_blank");
+  };
 }
 
-// Enviar pedido al hacer clic en el botón de WhatsApp
-btnWhatsapp.addEventListener("click", () => {
-  confirmarPedidoFinal();
-});
-}
-// (Eliminado el bloque del botón verde)
+
 
 
 
@@ -621,6 +678,11 @@ function agregarAlCarritoDesdeSeleccion() {
       alert("⚠️ Debes seleccionar al menos 1 proteína");
       return;
     }
+    if (tipoBowl === "armar" && !validarToppingsBowl()) {
+  alert("⚠️ Debes seleccionar al menos 5 toppings para tu bowl.");
+  return;
+}
+
 
     if (tipoBowl === "semana") {
   const seleccion = document.querySelector('#bowlOpciones select');
@@ -744,6 +806,10 @@ if (!carrito.some(item => productosIguales(item, sandwich))) {
     alert("⚠️ Debes seleccionar al menos una proteína para tus nachos.");
     return;
   }
+if (!validarToppingsNachos()) {
+  alert("⚠️ Debes seleccionar al menos 3 toppings para tus nachos.");
+  return;
+}
 
   let descripcion = "Nachos personalizados";
   if (protSeleccionadas.length > 0) descripcion += `\nProteínas: ${protSeleccionadas.join(", ")}`;
@@ -764,7 +830,7 @@ if (totalProte > 1) {
 }
 
   const totalTops = topIds.reduce((sum, id) => sum + parseInt(document.getElementById(id).textContent), 0);
-if (totalTops > 4) {
+if (totalTops > 3) {
   const extraTops = { nombre: `Adicional toppings (${totalTops - 4})`, precio: 2500 * (totalTops - 4), cantidad: 1 };
   if (!carrito.some(item => productosIguales(item, extraTops))) carrito.push(extraTops);
 }
@@ -801,10 +867,16 @@ if (totalTops > 4) {
     })
     .filter(Boolean);
 
-  if (protSeleccionadas.length === 0 || topSeleccionados.length === 0) {
-    alert("❌ Selecciona al menos una proteína y toppings para las Papas Locas");
-    return;
-  }
+  if (protSeleccionadas.length === 0) {
+  alert("❌ Selecciona al menos una proteína para las Papas Locas");
+  return;
+}
+
+if (!validarToppingsPapas()) {
+  alert("⚠️ Debes seleccionar al menos 3 toppings para las Papas Locas");
+  return;
+}
+
 
   const tipoPapas = document.getElementById("tipoPapasLocas")?.value;
   if (!tipoPapas) {
@@ -981,7 +1053,7 @@ function limitarSeleccionToppings(idContenedor, limite) {
     });
   });
 }
-limitarSeleccionToppings("contenedorToppingsNachos", 4);
+limitarSeleccionToppings("contenedorToppingsNachos", 3);
 limitarSeleccionToppings("contenedorToppingsPapas", 3);
 function mostrarImagen(nombreArchivo) {
   const img = document.getElementById("imgSeleccionada");
@@ -1245,6 +1317,33 @@ function productosIguales(a, b) {
     cuerpo.classList.remove("overflow-hidden");
   };
 });
+  async function validarHorarioDesdeAPI() {
+    try {
+      const response = await fetch("https://worldtimeapi.org/api/timezone/America/Bogota");
+      const data = await response.json();
+
+      const dateTime = new Date(data.datetime);
+      const hora = dateTime.getHours(); // Hora en Bogotá
+
+      const btnEntrar = document.querySelector("#pantallaBienvenida button");
+      const mensaje = document.getElementById("mensajeHorario");
+
+      if (hora >= 10) {
+        btnEntrar.disabled = true;
+        btnEntrar.classList.add("bg-gray-400", "cursor-not-allowed");
+        btnEntrar.classList.remove("hover:bg-[#68b8e0]");
+        mensaje.textContent = "🚫 Los pedidos solo se reciben hasta las 10:00 AM (hora Colombia)";
+        mensaje.classList.remove("hidden");
+      } else {
+        btnEntrar.disabled = false;
+        mensaje.classList.add("hidden");
+      }
+    } catch (error) {
+      console.error("Error al obtener la hora de Bogotá:", error);
+    }
+  }
+
+  validarHorarioDesdeAPI();
 </script>
 
 </body>
