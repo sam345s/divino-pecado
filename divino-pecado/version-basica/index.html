@@ -459,7 +459,7 @@ if (tipo === "semana") {
         </div>
       </div>
       <div class="flex justify-between items-center">
-        <span>Macarrones</span>
+        <span>Pasta Corta</span>
         <div class="flex items-center gap-2">
           <button onclick="cambiar('base3', -1)" class="px-2 bg-gray-200 rounded">−</button>
           <span id="base3" class="min-w-[20px] text-center">0</span>
@@ -488,8 +488,8 @@ if (tipo === "semana") {
       <div class="flex justify-between items-center"><span>Albóndigas</span><div class="flex items-center gap-2"><button onclick="cambiar('prot5', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot5" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot5', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
       <div class="flex justify-between items-center"><span>Cerdo BBQ</span><div class="flex items-center gap-2"><button onclick="cambiar('prot6', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot6" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot6', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
       <div class="flex justify-between items-center"><span>Tartar de pollo</span><div class="flex items-center gap-2"><button onclick="cambiar('prot7', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot7" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot7', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
-      <div class="flex justify-between items-center"><span>Carne vegana</span><div class="flex items-center gap-2"><button onclick="cambiar('prot8', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot8" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot8', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
-      <div class="flex justify-between items-center"><span>Pollo vegano</span><div class="flex items-center gap-2"><button onclick="cambiar('prot9', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot9" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot9', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Carne vegana (Base de lentejas)</span><div class="flex items-center gap-2"><button onclick="cambiar('prot8', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot8" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot8', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
+      <div class="flex justify-between items-center"><span>Pollo vegano (Base de Garbanzo)</span><div class="flex items-center gap-2"><button onclick="cambiar('prot9', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot9" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot9', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
       <div class="flex justify-between items-center"><span>Rollitos primavera</span><div class="flex items-center gap-2"><button onclick="cambiar('prot10', -1)" class="px-2 bg-gray-200 rounded">−</button><span id="prot10" class="min-w-[20px] text-center">0</span><button onclick="cambiar('prot10', 1)" class="px-2 bg-gray-200 rounded">+</button></div></div>
     </div>
   </label>
@@ -711,7 +711,7 @@ const basesNombres = ['Arroz', 'Arroz integral', 'Pasta corta', 'Lechuga'];
 const protIds = ['prot1','prot2','prot3','prot4','prot5','prot6','prot7','prot8','prot9','prot10'];
 const protNombres = [
   'Carne ropa vieja', 'Pollo a la plancha en cubos', 'Pechuga en ají de gallina', 'Carne a la plancha en cubos',
-  'Albóndigas', 'Cerdo a la plancha BBQ en cubos', 'Tartar de pollo', 'Carne vegana (base de lentejas)', 'Pollo vegano (base de garbanzo)', 'Rollitos primavera'
+  'Albóndigas', 'Cerdo a la plancha BBQ en cubos', 'Tartar de pollo', 'Carne vegana (Base de lentejas)', 'Pollo vegano (Base de Garbanzo)', 'Rollitos primavera'
 ];
 const topIds = [
   'top1','top2','top3','top4','top5','top6','top7','top8','top9','top10',
@@ -792,7 +792,7 @@ if (!carrito.some(item => productosIguales(item, sandwich))) {
   const protIds = ['nachoprot1','nachoprot2','nachoprot3','nachoprot4','nachoprot5','nachoprot6','nachoprot7','nachoprot8','nachoprot9','nachoprot10'];
   const protNombres = [
     'Carne ropa vieja', 'Pollo a la plancha', 'Pechuga en ají de gallina', 'Carne en cubos',
-    'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo', 'Carne vegana', 'Pollo vegano', 'Rollitos primavera'
+    'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo', 'Carne vegana (Base de lentejas)', 'Pollo vegano (Base de Garbanzo)', 'Rollitos primavera'
   ];
   const topIds = ['nachotop1','nachotop2','nachotop3','nachotop4','nachotop5','nachotop6','nachotop7','nachotop8','nachotop9','nachotop10','nachotop11','nachotop12','nachotop13','nachotop14','nachotop15'];
   const topNombres = [
@@ -851,7 +851,7 @@ if (totalTops > 3) {
   const protIds = ['papasprot1','papasprot2','papasprot3','papasprot4','papasprot5','papasprot6','papasprot7','papasprot8','papasprot9','papasprot10'];
   const protNombres = [
     'Carne ropa vieja', 'Pollo a la plancha', 'Pechuga en ají de gallina', 'Carne en cubos',
-    'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo', 'Carne vegana', 'Pollo vegano', 'Rollitos primavera'
+    'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo', 'Carne vegana (Base de lentejas)', 'Pollo vegano (Base de Garbanzo)', 'Rollitos primavera'
   ];
   const protSeleccionadas = protIds
     .map((id, i) => {
@@ -1204,7 +1204,7 @@ function generarControlesProteinas(prefix = "") {
   const nombres = [
     'Carne ropa vieja', 'Pollo a la plancha', 'Pechuga en ají de gallina',
     'Carne en cubos', 'Albóndigas', 'Cerdo BBQ', 'Tartar de pollo',
-    'Carne vegana', 'Pollo vegano', 'Rollitos primavera'
+    'Carne vegana (Base de lentejas)', 'Pollo vegano (Base de Garbanzo)', 'Rollitos primavera'
   ];
 
   return nombres.map((nombre, i) => `
